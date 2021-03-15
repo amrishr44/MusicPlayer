@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
 
             MediaPlayerService.audioList = storageUtil.loadAudio();
             MediaPlayerService.audioIndex = storageUtil.loadAudioIndexAndPosition()[0];
-            if (MediaPlayerService.audioList.size() != 0) MediaPlayerService.activeAudio = MediaPlayerService.audioList.get(MediaPlayerService.audioIndex);
+            if (MediaPlayerService.audioList.size() != 0 && MediaPlayerService.audioIndex >-1) MediaPlayerService.activeAudio = MediaPlayerService.audioList.get(MediaPlayerService.audioIndex);
         }
 
     }
