@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_album_songs"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.playlists.PlaylistSongsFragment">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar3"
+        android:layout_width="match_parent"
+        android:layout_height="255dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/album_toolbar">
+
+
+            <ImageView
+                android:id="@+id/app_bar_image_playlist"
+                android:layout_width="match_parent"
+                android:layout_height="255dp"
+                android:background="#FFF"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                app:srcCompat="@drawable/cassettes" />
+
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#95000000"
+                app:layout_collapseMode="parallax">
+
+                <TextView
+                    android:id="@+id/playlist_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="120dp"
+                    android:layout_marginTop="80dp"
+                    android:layout_marginEnd="60dp"
+                    android:fontFamily="@font/space_mono"
+                    android:maxLines="3"
+                    android:text="TextView"
+                    android:textColor="#FFF"
+                    android:textSize="16sp" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="40dp"
+                    android:layout_marginTop="70dp"
+                    android:background="@color/programmer_green">
+
+                    <ImageView
+                        android:id="@+id/small_playlist_art"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:layout_margin="2dp"
+                        android:background="#FFF"
+                        app:srcCompat="@drawable/cassettes" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/playlist_song_num_songs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="300dp"
+                    android:layout_marginTop="100dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/textview_bg"
+                    android:fontFamily="@font/eczar"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:singleLine="true"
+                    android:text="sdvfg"
+                    android:textColor="@color/programmer_green"
+                    android:textSize="14sp" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@color/programmer_green"
+                android:orientation="horizontal"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp">
+
+                <Button
+                    android:id="@+id/playlist_play_all"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_weight="1"
+                    android:background="#000"
+                    android:fontFamily="@font/space_mono"
+                    android:text="PLAY ALL"
+                    android:textColor="@color/programmer_green" />
+
+                <Button
+                    android:id="@+id/playlist_shuffle_all"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_weight="1.25"
+                    android:background="#000"
+                    android:fontFamily="@font/space_mono"
+                    android:text="SHUFFLE ALL"
+                    android:textColor="@color/programmer_green" />
+
+                <Button
+                    android:id="@+id/playlist_queue_all"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_marginEnd="2dp"
+                    android:layout_weight="1"
+                    android:background="#000"
+                    android:fontFamily="@font/space_mono"
+                    android:text="QUEUE ALL"
+                    android:textColor="@color/programmer_green" />
+            </LinearLayout>
+
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/playlist_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                android:visibility="invisible"
+                app:layout_collapseMode="pin" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
+        android:id="@+id/fast_scroller_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:textAlignment="center"
+        android:fadeScrollbars="true"
+        app:handleDrawable="@drawable/fastscrollbar_hidden"
+        app:handleHasFixedSize="true"
+        app:handleHeight="35dp"
+        app:handleWidth="13dp"
+        app:popupDrawable="@null"
+        app:popupPosition="beforeTrack"
+        app:trackDrawable="@null"
+        app:fastScrollDirection="vertical"
+        app:popupTextStyle="@style/FastScrollBarText"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlist_songs_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:paddingTop="1dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller>
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

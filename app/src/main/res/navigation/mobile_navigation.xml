@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_folders">
+
+    <fragment
+        android:id="@+id/nav_folders"
+        android:name="com.example.musicplayer.ui.folders.FoldersFragment"
+        android:label="@string/menu_folders"
+        tools:layout="@layout/fragment_folders">
+
+
+        <action
+            android:id="@+id/action_nav_folders_self"
+            app:destination="@id/nav_folders" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_songs"
+        android:name="com.example.musicplayer.ui.songs.SongsFragment"
+        android:label="@string/menu_songs"
+        tools:layout="@layout/fragment_songs" />
+
+    <fragment
+        android:id="@+id/nav_playlists"
+        android:name="com.example.musicplayer.ui.playlists.PlaylistsFragment"
+        android:label="@string/menu_playlist"
+        tools:layout="@layout/fragment_playlists" >
+        <action
+            android:id="@+id/action_nav_playlists_to_playlistSongsFragment"
+            app:destination="@id/playlistSongsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_artists"
+        android:name="com.example.musicplayer.ui.artists.ArtistsFragment"
+        android:label="@string/menu_artists"
+        tools:layout="@layout/artists_fragment" >
+        <action
+            android:id="@+id/action_nav_artists_to_artist_albums_frag"
+            app:destination="@id/artist_albums_frag" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_albums"
+        android:name="com.example.musicplayer.ui.albums.AlbumsFragment"
+        android:label="@string/menu_albums"
+        tools:layout="@layout/fragment_albums" >
+        <action
+            android:id="@+id/action_nav_albums_to_albumSongsFragment2"
+            app:destination="@id/albumSongsFragment2"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/albumSongsFragment2"
+        android:name="com.example.musicplayer.ui.albums.AlbumSongsFragment"
+        android:label="Albums"
+        tools:layout="@layout/fragment_album_songs" />
+    <fragment
+        android:id="@+id/artist_albums_frag"
+        android:name="com.example.musicplayer.ui.artists.ArtistAlbumsFragment"
+        android:label="Albums"
+        tools:layout="@layout/fragment_artist_albums" >
+        <action
+            android:id="@+id/action_artist_albums_frag_to_albumSongsFragment2"
+            app:destination="@id/albumSongsFragment2"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_in" />
+    </fragment>
+    <action
+        android:id="@+id/action_global_nav_folders"
+        app:destination="@id/nav_folders" />
+    <action
+        android:id="@+id/action_global_albumSongsFragment2"
+        app:destination="@id/albumSongsFragment2" />
+    <action
+        android:id="@+id/action_global_artist_albums_frag"
+        app:destination="@id/artist_albums_frag" />
+    <fragment
+        android:id="@+id/playlistSongsFragment"
+        android:name="com.example.musicplayer.ui.playlists.PlaylistSongsFragment"
+        android:label="fragment_playlist_songs"
+        tools:layout="@layout/fragment_playlist_songs" />
+
+</navigation>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".ui.folders.FoldersFragment">
+
+    <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
+        android:id="@+id/fast_scroller_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:fadeScrollbars="true"
+        app:handleDrawable="@drawable/fastscrollbar_hidden"
+        app:handleHasFixedSize="true"
+        app:handleHeight="35dp"
+        app:handleWidth="13dp"
+        app:popupDrawable="@null"
+        app:popupPosition="beforeTrack"
+        app:trackDrawable="@null"
+        app:fastScrollDirection="vertical"
+        app:popupTextStyle="@style/FastScrollBarText">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/folders_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    </com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller>
+
+</LinearLayout>

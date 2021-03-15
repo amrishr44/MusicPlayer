@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/artist_selected"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    android:padding="3dp"
+    android:orientation="vertical"
+    android:background="@color/programmer_green">
+
+    <ImageView
+        android:id="@+id/artists_artist_art"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_gravity="center_horizontal"
+        android:background="#FFF"
+        app:srcCompat="@drawable/cassettes" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#000">
+
+        <TextView
+            android:id="@+id/artists_artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:fontFamily="@font/space_mono"
+            android:gravity="center|start|center_horizontal"
+            android:isScrollContainer="false"
+            android:keepScreenOn="false"
+            android:maxLines="2"
+            android:singleLine="false"
+            android:text="TextView"
+            android:textColor="#FFF"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/artists_popup_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="3dp"
+            android:padding="5dp"
+            app:srcCompat="@drawable/popup_menu" />
+    </FrameLayout>
+
+</LinearLayout>

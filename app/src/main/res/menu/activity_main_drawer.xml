@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_songs"
+            android:icon="@drawable/songs_green"
+            android:title="@string/menu_songs"
+            android:checkable="true"
+            android:onClick="onSongClicked" />
+
+        <item
+            android:id="@+id/nav_albums"
+            android:icon="@drawable/album_green"
+            android:title="@string/menu_albums"
+            android:checkable="true"
+            android:onClick="onAlbumClicked" />
+
+        <item
+            android:id="@+id/nav_artists"
+            android:icon="@drawable/artist_green"
+            android:title="@string/menu_artists"
+            android:checkable="true"
+            android:onClick="onArtistClicked"  />
+
+        <item
+            android:id="@+id/nav_folders"
+            android:icon="@drawable/folder_green"
+            android:title="@string/menu_folders"
+            android:checkable="true"
+            android:onClick="onFolderClicked"/>
+
+        <item
+            android:id="@+id/nav_playlists"
+            android:icon="@drawable/playlist_green"
+            android:title="@string/menu_playlist"
+            android:checkable="true"
+            android:onClick="onPlaylistClicked" />
+
+    </group>
+</menu>

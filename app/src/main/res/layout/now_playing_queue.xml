@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/now_playing_song"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginBottom="1dp"
+        android:background="#000">
+
+        <ImageView
+            android:id="@+id/queue"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="10dp"
+            app:srcCompat="@drawable/queue_white" />
+
+        <TextView
+            android:id="@+id/song_number"
+            android:layout_width="50dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="50dp"
+            android:background="#FFF"
+            android:fadingEdge="horizontal|vertical"
+            android:fontFamily="@font/eczar"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="20/120"
+            android:textAlignment="center"
+            android:textColor="#000"
+            android:textSize="10sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/song_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="110dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="40dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:fontFamily="@font/space_mono"
+            android:freezesText="true"
+            android:marqueeRepeatLimit="@android:integer/config_shortAnimTime"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="TextView"
+            android:textColor="#FFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/song_artist_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="111dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="40dp"
+            android:fontFamily="@font/space_mono"
+            android:singleLine="true"
+            android:text="TextView"
+            android:textColor="@color/notification_artist"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/npq_popup_menu"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="@drawable/popup_menu" />
+
+
+    </FrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/npq_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark" />
+
+
+</LinearLayout>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item android:id="@+id/np_album"
+        android:title="Go to album"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/np_artist"
+        android:title="Go to artist"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/np_song_add_to_playlist"
+        android:title="@string/add_to_playlist"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/np_song_view_lyrics"
+        android:title="@string/lyrics"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/np_song_edit_tags"
+        android:title="@string/edit_tags"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/np_song_use_as_ringtone"
+        android:title="@string/use_as_ringtone"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/np_song_delete"
+        android:title="@string/delete"
+        app:showAsAction="never"/>
+
+</menu>

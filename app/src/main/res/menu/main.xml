@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_search"
+        android:title="Search"
+        app:showAsAction="always"
+        android:icon="@drawable/search_green"/>
+
+    <item android:id="@+id/action_play_all"
+        android:title="Play All"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_shuffle_all"
+        android:title="Shuffle All"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_sort"
+        android:title="Sort"
+        app:showAsAction="never">
+
+        <menu>
+            <group android:checkableBehavior="single">
+
+
+                <item
+                    android:id="@+id/sort_track"
+                    android:checkable="true"
+                    android:title="Track"
+                    app:showAsAction="never"/>
+
+                <item
+                    android:id="@+id/sort_title"
+                    android:checkable="true"
+                    android:title="Title"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/sort_album"
+                    android:checkable="true"
+                    android:title="Album"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/sort_artist"
+                    android:checkable="true"
+                    android:title="Artist"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/sort_duration"
+                    android:checkable="true"
+                    android:title="Duration"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/sort_year"
+                    android:checkable="true"
+                    android:title="Year"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/sort_date_added"
+                    android:checkable="true"
+                    android:title="Date added"
+                    app:showAsAction="never" />
+
+                <item
+                    android:id="@+id/sort_num_album"
+                    android:checkable="true"
+                    android:title="Number of albums"
+                    app:showAsAction="never"/>
+
+                <item
+                    android:id="@+id/sort_num_songs"
+                    android:checkable="true"
+                    android:title="Number of songs"
+                    app:showAsAction="never"/>
+
+
+            </group>
+
+            <item
+                android:id="@+id/sort_reverse"
+                android:checkable="true"
+                android:title="Reverse order"
+                app:showAsAction="never" />
+
+        </menu>
+
+    </item>
+
+    <item android:id="@+id/action_save_now_playing"
+        android:title="Save Now Playing"
+        app:showAsAction="never"/>
+
+
+    <item android:id="@+id/action_equalizer"
+        android:title="Equalizer"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+</menu>

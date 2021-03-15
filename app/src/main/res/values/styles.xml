@@ -1,0 +1,104 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/programmer_green</item>
+        <item name="android:itemBackground">@color/colorDark</item>
+        <item name="android:itemTextAppearance">@style/Custom_text_Appearance_2</item>
+        <item name="android:homeAsUpIndicator">@drawable/back_green</item>
+        <item name="android:navigationIcon">@drawable/nav_green</item>
+        <item name="android:moreIcon">@drawable/popup_menu_green</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeBackground">@color/colorDark</item>
+        <item name="android:actionModeCloseDrawable">@drawable/back_green</item>
+        <item name="actionModeStyle">@style/Custom_Action_Mode_Text</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/programmer_green</item>
+        <item name="android:itemBackground">@color/colorDark</item>
+        <item name="android:itemTextAppearance">@style/Custom_text_Appearance_2</item>
+        <item name="android:itemPadding">5dp</item>
+        <item name="android:homeAsUpIndicator">@drawable/back_green</item>
+        <item name="android:navigationIcon">@drawable/nav_green</item>
+        <item name="android:moreIcon">@drawable/popup_menu_green</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverFlowButton</item>
+        <item name="android:checkboxStyle">@style/Circular_Checkbox</item>
+        <item name="android:spinnerDropDownItemStyle">@style/Custom_Spinner_Item_Style</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:navigationIcon">@drawable/nav_green</item>
+        <item name="colorAccent">@color/programmer_green</item>
+        <item name="android:moreIcon">@drawable/popup_menu_green</item>
+    </style>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:homeAsUpIndicator">@drawable/back_green</item>
+        <item name="colorAccent">@color/programmer_green</item>
+        <item name="android:navigationIcon">@drawable/nav_green</item>
+        <item name="android:moreIcon">@drawable/popup_menu_green</item>
+    </style>
+
+    <style name="Custom_text_Appearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/programmer_green</item>
+        <item name="android:fontFamily">@font/space_mono</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:colorAccent">@color/programmer_green</item>
+        <item name="android:textColorLink">@color/programmer_green</item>
+    </style>
+
+    <style name="Custom_text_Appearance_2">
+    <item name="android:textColor">@color/programmer_green</item>
+    <item name="android:fontFamily">@font/space_mono</item>
+    <item name="android:textSize">14sp</item>
+    <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Custom_text_Appearance_3" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">@color/programmer_green</item>
+        <item name="android:fontFamily">@font/eczar</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Custom_Action_Mode_Text" parent="Widget.AppCompat.ActionMode">
+        <item name="titleTextStyle">@style/Custom_text_Appearance_3</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.SearchActivity">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:editTextColor">@color/programmer_green</item>
+        <item name="android:textColorSecondary">@color/grey</item>
+        <item name="android:textCursorDrawable">@drawable/cursor_green</item>
+    </style>
+
+    <style name="Circular_Checkbox" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/circular_checkbox</item>
+    </style>
+
+    <style name="FastScrollBarText">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">#FFF</item>
+    </style>
+
+    <style name="OverFlowButton" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/popup_menu_green</item>
+    </style>
+
+    <style name="Custom_Spinner_Item_Style" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textColor">@color/programmer_green</item>
+        <item name="android:fontFamily">@font/space_mono</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
+    </style>
+
+</resources>

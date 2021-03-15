@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/programmer_green"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/tv_add_to_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="2dp"
+        android:background="#000"
+        android:padding="10dp"
+        android:text="@string/add_to_playlist"
+        android:textAlignment="center"
+        android:textAppearance="@style/Custom_text_Appearance"
+        android:textSize="20sp" />
+
+    <FrameLayout
+        android:id="@+id/create_new_playlist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        android:background="#000"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            app:srcCompat="@drawable/add_green" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="40dp"
+            android:focusableInTouchMode="true"
+            android:freezesText="true"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="New Playlist"
+            android:textAppearance="@style/Custom_text_Appearance"
+            android:textSize="18sp" />
+
+
+    </FrameLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/add_to_playlist_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF" >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</LinearLayout>

@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#000"
+    android:orientation="vertical"
+    tools:context=".ui.SettingsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/programmer_green"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/settings_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toolbar_bg"
+            android:fitsSystemWindows="true"
+            android:gravity="center_vertical"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationIcon="@drawable/back_green"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="Settings"
+            app:titleMargin="0dp"
+            app:titleTextColor="@color/programmer_green"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:background="#000"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/space_mono"
+            android:gravity="center_vertical"
+            android:paddingStart="5dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="10dp"
+            android:text="Select the browsers to be displayed"
+            android:textColor="@color/programmer_green"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkbox_songs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:background="#000"
+            android:button="@drawable/checkbox"
+            android:checked="true"
+            android:fontFamily="@font/space_mono"
+            android:paddingStart="20dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="5dp"
+            android:text="@string/menu_songs"
+            android:textColor="@color/programmer_green"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkbox_albums"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:background="#000"
+            android:button="@drawable/checkbox"
+            android:checked="true"
+            android:fontFamily="@font/space_mono"
+            android:paddingStart="20dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="5dp"
+            android:text="@string/menu_albums"
+            android:textColor="@color/programmer_green"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkbox_artists"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:background="#000"
+            android:button="@drawable/checkbox"
+            android:checked="true"
+            android:fontFamily="@font/space_mono"
+            android:paddingStart="20dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="5dp"
+            android:text="@string/menu_artists"
+            android:textColor="@color/programmer_green"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkbox_folders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:background="#000"
+            android:button="@drawable/checkbox"
+            android:checked="true"
+            android:fontFamily="@font/space_mono"
+            android:paddingStart="20dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="5dp"
+            android:text="@string/menu_folders"
+            android:textColor="@color/programmer_green"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/checkbox_playlist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:background="#000"
+            android:button="@drawable/checkbox"
+            android:checked="true"
+            android:fontFamily="@font/space_mono"
+            android:paddingStart="20dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="5dp"
+            android:text="@string/menu_playlist"
+            android:textColor="@color/programmer_green"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="2dp"
+            android:background="#000"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/space_mono"
+            android:gravity="center_vertical"
+            android:paddingStart="5dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="10dp"
+            android:text="Select the permanent start destination"
+            android:textColor="@color/programmer_green"
+            android:textSize="18sp" />
+
+        <RadioGroup
+            android:id="@+id/radiogroup_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checkedButton="@id/radioButton_none">
+
+            <RadioButton
+                android:id="@+id/radioButton_none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:background="#000"
+                android:button="@drawable/circular_checkbox"
+                android:fontFamily="@font/space_mono"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="5dp"
+                android:text="None"
+                android:textColor="@color/programmer_green"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton_songs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:background="#000"
+                android:button="@drawable/circular_checkbox"
+                android:fontFamily="@font/space_mono"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="5dp"
+                android:text="@string/menu_songs"
+                android:textColor="@color/programmer_green"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton_albums"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:background="#000"
+                android:button="@drawable/circular_checkbox"
+                android:fontFamily="@font/space_mono"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="5dp"
+                android:text="@string/menu_albums"
+                android:textColor="@color/programmer_green"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton_artists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:background="#000"
+                android:button="@drawable/circular_checkbox"
+                android:fontFamily="@font/space_mono"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="5dp"
+                android:text="@string/menu_artists"
+                android:textColor="@color/programmer_green"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton_folders"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:background="#000"
+                android:button="@drawable/circular_checkbox"
+                android:fontFamily="@font/space_mono"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="5dp"
+                android:text="@string/menu_folders"
+                android:textColor="@color/programmer_green"
+                android:textSize="18sp" />
+
+            <RadioButton
+                android:id="@+id/radioButton_playlists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="1dp"
+                android:background="#000"
+                android:button="@drawable/circular_checkbox"
+                android:fontFamily="@font/space_mono"
+                android:paddingStart="20dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="5dp"
+                android:text="@string/menu_playlist"
+                android:textColor="@color/programmer_green"
+                android:textSize="18sp" />
+
+        </RadioGroup>
+
+        <CheckBox
+            android:id="@+id/checkbox_wallpaper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1dp"
+            android:background="#000"
+            android:button="@drawable/checkbox"
+            android:checked="true"
+            android:fontFamily="@font/space_mono"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="10dp"
+            android:text="Display album art on lock screen"
+            android:textColor="@color/programmer_green"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+
+</ScrollView>

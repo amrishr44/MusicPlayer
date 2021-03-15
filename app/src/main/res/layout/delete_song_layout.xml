@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/programmer_green"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="1dp"
+        android:background="#000"
+        android:maxLines="3"
+        android:padding="20dp"
+        android:text="TextView"
+        android:textAppearance="@style/Custom_text_Appearance" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/delete_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
+            android:background="#000"
+            android:text="@android:string/cancel"
+            android:textAppearance="@style/Custom_text_Appearance" />
+
+        <Button
+            android:id="@+id/delete_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
+            android:background="#000"
+            android:text="@string/delete"
+            android:textAppearance="@style/Custom_text_Appearance" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.artists.ArtistsFragment">
+
+    <com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller
+        android:id="@+id/fast_scroller_artist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:fadeScrollbars="true"
+        app:handleDrawable="@drawable/fastscrollbar_hidden"
+        app:handleHasFixedSize="true"
+        app:handleHeight="35dp"
+        app:handleWidth="13dp"
+        app:popupDrawable="@drawable/fsp"
+        app:popupPosition="beforeTrack"
+        app:trackDrawable="@null"
+        app:fastScrollDirection="vertical"
+        app:popupTextStyle="@style/FastScrollBarText">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/artists_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    </com.qtalk.recyclerviewfastscroller.RecyclerViewFastScroller>
+
+</FrameLayout>

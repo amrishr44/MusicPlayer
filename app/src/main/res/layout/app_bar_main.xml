@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#000"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            android:navigationIcon="@drawable/nav_green"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleMargin="0dp"
+            app:titleTextColor="@color/programmer_green"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <include
+        android:id="@+id/main_fragment"
+        layout="@layout/content_main" />
+
+    <LinearLayout
+        android:id="@+id/control_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_gravity="bottom"
+        android:background="#000"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/control_album_art"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:background="#FFF"
+            app:srcCompat="@drawable/cassettes" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="3dp"
+            android:layout_weight="4"
+            android:background="#000"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/control_tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:fontFamily="@font/space_mono"
+                android:freezesText="true"
+                android:marqueeRepeatLimit="@android:integer/config_shortAnimTime"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="TextView"
+                android:textColor="@color/programmer_green"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/control_tv_artist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="2dp"
+                android:singleLine="true"
+                android:text="TextView"
+                android:textColor="@color/programmer_green"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/control_iv_play"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="5dp"
+            android:layout_gravity="center_vertical"
+            android:background="#000"
+            app:srcCompat="@drawable/play_green" />
+    </LinearLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

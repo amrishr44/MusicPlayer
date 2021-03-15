@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3A434D</color>
+    <color name="colorPrimaryDark">#343D45</color>
+    <color name="colorItemSelected">#85343D45</color>
+    <color name="colorDark">#000000</color>
+    <color name="colorPrimaryLight">#6B7B8F</color>
+    <color name="grey">#636060</color>
+    <color name="lighter_black">#991F1D1D</color>
+    <color name="programmer_green">#4AAE40</color>
+    <color name="notification_artist">#C3C2C2</color>
+    <color name="dark_transparent_black">#99000000</color>
+    <color name="white">#FFFFFF</color>
+</resources>

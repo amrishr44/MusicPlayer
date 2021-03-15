@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000"
+    tools:context=".ui.equalizer.EqualizerActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/equalizer_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/toolbar_bg"
+        android:fitsSystemWindows="true"
+        android:gravity="center_vertical"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:contentInsetStartWithNavigation="0dp"
+        app:navigationIcon="@drawable/back_green"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:title="Equalizer"
+        app:titleMargin="0dp"
+        app:titleTextColor="@color/programmer_green">
+
+        <Switch
+            android:id="@+id/switch_eq"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|end"
+            android:layout_margin="10dp"
+            android:checked="false"
+            android:thumb="@drawable/song_seekbar_thumb"
+            android:track="@drawable/custom_toggle_bg" />
+
+    </androidx.appcompat.widget.Toolbar>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="80dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.2"
+            android:gravity="center_horizontal|center_vertical"
+            android:maxLines="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="Preset:"
+            android:textAppearance="@style/Custom_text_Appearance_3"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/preset_spinner"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:background="@drawable/spinner_bg"
+            android:dropDownWidth="wrap_content"
+            android:dropDownSelector="#000"
+            android:gravity="center|center_horizontal"
+            android:padding="5dp"
+            android:popupBackground="@drawable/selected"
+            android:scrollbars="none"
+            android:spinnerMode="dropdown"
+            android:theme="@style/Custom_Spinner_Item_Style" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/seekbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="4"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/seekbar_tv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="0.5"
+        android:orientation="horizontal"
+        android:paddingStart="10dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="20dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="80dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2.2"
+            android:gravity="center_horizontal|center_vertical"
+            android:maxLines="1"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:text="Reverb:"
+            android:textAppearance="@style/Custom_text_Appearance_3"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/reverb_spinner"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:background="@drawable/spinner_bg"
+            android:dropDownWidth="wrap_content"
+            android:dropDownSelector="#000"
+            android:gravity="center|center_horizontal"
+            android:padding="5dp"
+            android:popupBackground="@drawable/selected"
+            android:scrollbars="none"
+            android:spinnerMode="dropdown"
+            android:theme="@style/Custom_Spinner_Item_Style" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|center_vertical"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:text="Bass: "
+            android:textAppearance="@style/Custom_text_Appearance_3"
+            android:textSize="18sp" />
+
+
+        <SeekBar
+            android:id="@+id/bass_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:maxHeight="8dp"
+            android:paddingStart="50dp"
+            android:paddingEnd="50dp"
+            android:progressDrawable="@drawable/song_seekbar_style"
+            android:thumb="@drawable/song_seekbar_thumb" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal|center_vertical"
+            android:maxLines="1"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:text="Virtualizer: "
+            android:textAppearance="@style/Custom_text_Appearance_3"
+            android:textSize="18sp" />
+
+        <SeekBar
+            android:id="@+id/virtualizer_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:maxHeight="8dp"
+            android:paddingStart="50dp"
+            android:paddingEnd="50dp"
+            android:progressDrawable="@drawable/song_seekbar_style"
+            android:thumb="@drawable/song_seekbar_thumb" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/volume" />
+
+            <SeekBar
+                android:id="@+id/volume_seekbar_eq"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="4"
+                android:maxHeight="8dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="50dp"
+                android:progressDrawable="@drawable/song_seekbar_style"
+                android:thumb="@drawable/song_seekbar_thumb" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

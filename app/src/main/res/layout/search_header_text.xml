@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/search_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    android:layout_marginBottom="2dp"
+    android:background="#000"
+    android:gravity="center"
+    android:text="Songs"
+    android:textAlignment="center"
+    android:textAppearance="@style/Custom_text_Appearance">
+
+</TextView>

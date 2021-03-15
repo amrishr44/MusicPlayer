@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/selected_play"
+        android:title="Play"
+        android:icon="@drawable/play_green"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/selected_enqueue"
+        android:title="Enqueue"
+        android:icon="@drawable/enqueue_green"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/selected_play_next"
+        android:title="Play next"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/selected_shuffle"
+        android:title="Shuffle"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/selected_add_to_playlist"
+        android:title="Add to playlist"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/selected_delete"
+        android:title="Delete"
+        app:showAsAction="never"/>
+
+
+</menu>
