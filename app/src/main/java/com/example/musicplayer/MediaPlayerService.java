@@ -53,8 +53,6 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
     private boolean isShuffleOn;
     private int repeatModeValue = 0;    // 0 - Repeat off, 1 - Repeat the song playing now, 2- Repeat all songs
     private boolean isForeground = false;
-    private boolean isPlaying = true;
-
     private Toast toast;
 
     //Handle incoming phone calls
