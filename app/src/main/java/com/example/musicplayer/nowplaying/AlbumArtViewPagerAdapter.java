@@ -1,6 +1,9 @@
 package com.example.musicplayer.nowplaying;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Build;
 import android.view.LayoutInflater;
@@ -76,10 +79,26 @@ public class AlbumArtViewPagerAdapter extends RecyclerView.Adapter<AlbumArtViewP
         try {
             InputStream is = context.getContentResolver().openInputStream(Uri.parse("content://media/external/audio/albumart/" +  MediaPlayerService.audioList.get(position).getAlbumid()));
             is.close();
-            holder.now_playing_album_art.setImageURI(Uri.parse("content://media/external/audio/albumart/" +  MediaPlayerService.audioList.get(position).getAlbumid()));
+            if (MediaPlayerService.audioList.get(position).getAlbumid() != -100) {
+                holder.now_playing_album_art.setImageURI(Uri.parse("content://media/external/audio/albumart/" + MediaPlayerService.audioList.get(position).getAlbumid()));
+            }
+            else{
+                MediaMetadataRetriever m = new MediaMetadataRetriever();
+                m.setDataSource(MediaPlayerService.audioList.get(position).getData());
+                byte [] art = m.getEmbeddedPicture();
+                Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+                holder.now_playing_album_art.setImageBitmap(songImage);
+            }
 
         } catch (Exception e) {
-            holder.now_playing_album_art.setImageResource(R.mipmap.cassette_image_foreground);
+            if (MediaPlayerService.audioList.get(position).getAlbumid() == -100) {
+                MediaMetadataRetriever m = new MediaMetadataRetriever();
+                m.setDataSource(MediaPlayerService.audioList.get(position).getData());
+                byte [] art = m.getEmbeddedPicture();
+                Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+                holder.now_playing_album_art.setImageBitmap(songImage);
+            }
+            else holder.now_playing_album_art.setImageResource(R.mipmap.cassette_image_foreground);
         }
     }
 

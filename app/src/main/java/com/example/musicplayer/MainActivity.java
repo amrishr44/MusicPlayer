@@ -346,23 +346,48 @@ public class MainActivity extends AppCompatActivity {
                     control_tv_title.setText(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getTitle());
                     control_tv_artist.setText(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getArtist());
 
-                    Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid()))
-                            .error(R.mipmap.cassette_image_foreground)
-                            .placeholder(R.mipmap.cassette_image_foreground)
-                            .centerCrop()
-                            .fallback(R.mipmap.cassette_image_foreground)
-                            .into(control_album_art);
+                    if (storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid() != -100) {
+                        Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid()))
+                                .error(R.mipmap.cassette_image_foreground)
+                                .placeholder(R.mipmap.cassette_image_foreground)
+                                .centerCrop()
+                                .fallback(R.mipmap.cassette_image_foreground)
+                                .into(control_album_art);
+                    }
+                    else{
+                        MediaMetadataRetriever m = new MediaMetadataRetriever();
+                        m.setDataSource(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getData());
+                        Glide.with(MainActivity.this).load(m.getEmbeddedPicture())
+                                .error(R.mipmap.cassette_image_foreground)
+                                .placeholder(R.mipmap.cassette_image_foreground)
+                                .centerCrop()
+                                .fallback(R.mipmap.cassette_image_foreground)
+                                .into(control_album_art);
+                    }
                 }
                 else{
 
                     control_tv_title.setText(MediaPlayerService.activeAudio.getTitle());
                     control_tv_artist.setText(MediaPlayerService.activeAudio.getArtist());
-                    Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), MediaPlayerService.activeAudio.getAlbumid()))
-                            .error(R.mipmap.cassette_image_foreground)
-                            .placeholder(R.mipmap.cassette_image_foreground)
-                            .centerCrop()
-                            .fallback(R.mipmap.cassette_image_foreground)
-                            .into(control_album_art);
+
+                    if (MediaPlayerService.activeAudio.getAlbumid() != -100) {
+                        Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), MediaPlayerService.activeAudio.getAlbumid()))
+                                .error(R.mipmap.cassette_image_foreground)
+                                .placeholder(R.mipmap.cassette_image_foreground)
+                                .centerCrop()
+                                .fallback(R.mipmap.cassette_image_foreground)
+                                .into(control_album_art);
+                    }
+                    else {
+                        MediaMetadataRetriever m = new MediaMetadataRetriever();
+                        m.setDataSource(MediaPlayerService.activeAudio.getData());
+                        Glide.with(MainActivity.this).load(m.getEmbeddedPicture())
+                                .error(R.mipmap.cassette_image_foreground)
+                                .placeholder(R.mipmap.cassette_image_foreground)
+                                .centerCrop()
+                                .fallback(R.mipmap.cassette_image_foreground)
+                                .into(control_album_art);
+                    }
                 }
 
             }
@@ -451,12 +476,24 @@ public class MainActivity extends AppCompatActivity {
             control_tv_title.setText(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getTitle());
             control_tv_artist.setText(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getArtist());
 
-            Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid()))
-                    .error(R.mipmap.cassette_image_foreground)
-                    .placeholder(R.mipmap.cassette_image_foreground)
-                    .centerCrop()
-                    .fallback(R.mipmap.cassette_image_foreground)
-                    .into(control_album_art);
+            if (storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid() != -100) {
+                Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid()))
+                        .error(R.mipmap.cassette_image_foreground)
+                        .placeholder(R.mipmap.cassette_image_foreground)
+                        .centerCrop()
+                        .fallback(R.mipmap.cassette_image_foreground)
+                        .into(control_album_art);
+            }
+            else{
+                MediaMetadataRetriever m = new MediaMetadataRetriever();
+                m.setDataSource(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getData());
+                Glide.with(MainActivity.this).load(m.getEmbeddedPicture())
+                        .error(R.mipmap.cassette_image_foreground)
+                        .placeholder(R.mipmap.cassette_image_foreground)
+                        .centerCrop()
+                        .fallback(R.mipmap.cassette_image_foreground)
+                        .into(control_album_art);
+            }
 
             control_linear_layout.setVisibility(View.VISIBLE);
 
@@ -592,13 +629,16 @@ public class MainActivity extends AppCompatActivity {
 
         ContentResolver contentResolver = getContentResolver();
 
-        String docId = fileUri.toString();
-        docId = docId.substring(docId.lastIndexOf("/")+1);
-
         String path = fileUri.toString();
+
+        boolean isPathInMedia = true;
 
 
         if (path.contains("content://com.android.providers.downloads.documents")) {
+
+            isPathInMedia = false;
+
+            String docId = path.substring(path.lastIndexOf("/")+1);
 
             Uri downloadUri = Uri.parse("content://downloads/public_downloads");
             // Append download document id at uri end.
@@ -612,12 +652,16 @@ public class MainActivity extends AppCompatActivity {
 
                 path = downloadCursor.getString(downloadCursor.getColumnIndex(MediaStore.Audio.Media.DATA));
 
-
             }
             if (downloadCursor != null) {
 
                 downloadCursor.close();
             }
+        }
+        else if (path.contains("content://com.android.externalstorage.documents/")){
+            isPathInMedia = false;
+            path = "/storage" + path.substring(path.lastIndexOf("/")).replaceAll("%3A", "/").replaceAll("%20", " ").replaceAll("%2F","/").replaceAll("%2C", ",").replaceAll("%21", "!").replaceAll("%23", "#").replaceAll("%24", "$").replaceAll("%3B", ";").replaceAll("40", "@");
+
         }
 
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -625,8 +669,15 @@ public class MainActivity extends AppCompatActivity {
 
         try {
 
-            String selection = android.provider.MediaStore.Audio.Media.IS_MUSIC + "!= 0 AND " + MediaStore.Audio.Media.DATA + " LIKE ? " ;
-            Cursor cursor = contentResolver.query(uri, new String[]{"_id", "_data", "title", "artist", "album", "duration", "track", "artist_id", "album_id", "year"}, selection, new String[]{path + "%"}, null);
+            Cursor cursor;
+            if (isPathInMedia) {
+                String selection = android.provider.MediaStore.Audio.Media.IS_MUSIC + "!= 0 AND " + MediaStore.Audio.Media._ID + " = " + path.substring(path.lastIndexOf("/") + 1);
+                cursor = contentResolver.query(uri, new String[]{"_id", "_data", "title", "artist", "album", "duration", "track", "artist_id", "album_id", "year"}, selection, null, null);
+            }
+            else {
+                String selection = android.provider.MediaStore.Audio.Media.IS_MUSIC + "!= 0 AND " + MediaStore.Audio.Media.DATA + " ? ";
+                cursor = contentResolver.query(uri, new String[]{"_id", "_data", "title", "artist", "album", "duration", "track", "artist_id", "album_id", "year"}, selection, new String[]{path}, null);
+            }
 
             if (cursor != null && cursor.getCount() > 0) {
 
@@ -644,14 +695,13 @@ public class MainActivity extends AppCompatActivity {
                 long year = cursor.getLong(9);
 
                 song.add(new Songs(id, data, title, artist, album, artistId, albumId, trackNumber, duration, year));
-
             }
+            else throw new Exception("bruh");
             if (cursor != null) {
 
                 cursor.close();
             }
         }catch (Exception e){
-
             MediaMetadataRetriever m = new MediaMetadataRetriever();
             m.setDataSource(path);
             int duration = Integer.parseInt(m.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));

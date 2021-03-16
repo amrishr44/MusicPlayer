@@ -8,8 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -400,16 +402,42 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        notificationBigContentView.setImageViewUri(R.id.big_cv_small_album_art, myuri);
-                        notificationBigContentView.setImageViewUri(R.id.big_cv_bg, myuri);
-                        notificationContentView.setImageViewUri(R.id.content_view_album_art, myuri);
+                        if (MediaPlayerService.activeAudio.getAlbumid() != -100) {
+
+                            notificationBigContentView.setImageViewUri(R.id.big_cv_small_album_art, myuri);
+                            notificationBigContentView.setImageViewUri(R.id.big_cv_bg, myuri);
+                            notificationContentView.setImageViewUri(R.id.content_view_album_art, myuri);
+                        }
+                        else {
+
+                            MediaMetadataRetriever m = new MediaMetadataRetriever();
+                            m.setDataSource(MediaPlayerService.activeAudio.getData());
+                            byte[] art = m.getEmbeddedPicture();
+                            Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+                            notificationBigContentView.setImageViewBitmap(R.id.big_cv_small_album_art, songImage);
+                            notificationBigContentView.setImageViewBitmap(R.id.big_cv_bg, songImage);
+                            notificationContentView.setImageViewBitmap(R.id.content_view_album_art, songImage);
+                        }
                     }
                 });
                 is.close();
             }catch (Exception ignored){
-                notificationBigContentView.setImageViewResource(R.id.big_cv_bg, R.mipmap.cassette_image_foreground);
-                notificationBigContentView.setImageViewResource(R.id.big_cv_small_album_art, R.mipmap.cassette_image_foreground);
-                notificationContentView.setImageViewResource(R.id.content_view_album_art, R.mipmap.cassette_image_foreground);
+                if (MediaPlayerService.activeAudio.getAlbumid() != -100) {
+
+                    notificationBigContentView.setImageViewResource(R.id.big_cv_bg, R.mipmap.cassette_image_foreground);
+                    notificationBigContentView.setImageViewResource(R.id.big_cv_small_album_art, R.mipmap.cassette_image_foreground);
+                    notificationContentView.setImageViewResource(R.id.content_view_album_art, R.mipmap.cassette_image_foreground);
+                }
+                else {
+
+                    MediaMetadataRetriever m = new MediaMetadataRetriever();
+                    m.setDataSource(MediaPlayerService.activeAudio.getData());
+                    byte[] art = m.getEmbeddedPicture();
+                    Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
+                    notificationBigContentView.setImageViewBitmap(R.id.big_cv_small_album_art, songImage);
+                    notificationBigContentView.setImageViewBitmap(R.id.big_cv_bg, songImage);
+                    notificationContentView.setImageViewBitmap(R.id.content_view_album_art, songImage);
+                }
             }
 
             final String title = activeAudio.getTitle();
