@@ -23,6 +23,7 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,6 +61,7 @@ import com.example.musicplayer.ui.artists.ArtistsFragment;
 import com.example.musicplayer.ui.equalizer.EqualizerActivity;
 import com.example.musicplayer.ui.search.SearchActivity;
 import com.example.musicplayer.ui.songs.SongsFragment;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -70,11 +72,12 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
     Toast toast;
 
-    private boolean fromMainActivity = true;
+    private int fromMainActivity = 0;
     private final int EDIT_TAGS_REQUEST_CODE = 420;
     public static int index = 0;
     private String totalSongNo;
     private int resumePosition;
+    private boolean wasMoved = false;
 
     private RecyclerView recyclerView;
     private QueueAdapter queueAdapter;
@@ -162,9 +165,10 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                 @Override
                 public void run() {
 
-                    queueAdapter.notifyItemMoved(fromPosition, toPosition);
-                    button = true;
                     view_pager_adapter.notifyItemMoved(fromPosition, toPosition);
+                    button = true;
+                    wasMoved = true;
+                    queueAdapter.notifyItemMoved(fromPosition, toPosition);
                     song_number.setText(MediaPlayerService.audioList.indexOf(MediaPlayerService.activeAudio)+1 + totalSongNo);
                     MediaPlayerService.audioIndex = MediaPlayerService.audioList.indexOf(MediaPlayerService.activeAudio);
                     storage.storeAudioIndexAndPostion(MediaPlayerService.audioList.indexOf(MediaPlayerService.activeAudio), MediaPlayerService.mediaPlayer.getCurrentPosition());
@@ -173,7 +177,6 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
 
             return true;
-
         }
 
         @Override
@@ -184,20 +187,19 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
             if (position != MediaPlayerService.audioIndex) {
                 MediaPlayerService.audioList.remove(position);
                 queueAdapter.notifyItemRemoved(position);
-                button = true;
+                if (position < MediaPlayerService.audioIndex) {
+                    button = true;
+                    MediaPlayerService.audioIndex--;
+                }
                 view_pager_adapter.notifyItemRemoved(position);
                 storage.storeAudio(MediaPlayerService.audioList);
 
                 totalSongNo = "/" + MediaPlayerService.audioList.size();
-                if (position < MediaPlayerService.audioIndex) {
-                    song_number.setText(MediaPlayerService.audioIndex + totalSongNo);
-                    MediaPlayerService.audioIndex--;
-                }
-                else song_number.setText((MediaPlayerService.audioIndex+1) + totalSongNo);
+                song_number.setText((MediaPlayerService.audioIndex+1) + totalSongNo);
 
             }
             else {
-                toast.cancel();
+                if (toast != null) toast.cancel();
                 toast = Toast.makeText(NowPlaying.this, "Can't remove the currently playing song!", Toast.LENGTH_SHORT);
                 toast.show();
                 queueAdapter.notifyItemChanged(position);
@@ -254,6 +256,24 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
         volume_seekbar = findViewById(R.id.volume_seekBar);
 
+        SlidingUpPanelLayout now_playing_sliding_layout = findViewById(R.id.now_playing_sliding_layout);
+        now_playing_sliding_layout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+
+                Log.d("TAGSTATE", String.valueOf(newState));
+                if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED && wasMoved) {
+                    album_art_view_pager.setCurrentItem(MediaPlayerService.audioIndex);
+                    wasMoved = false;
+                }
+            }
+        });
+
 
         try {
             totalSongNo = "/" + MediaPlayerService.audioList.size();
@@ -279,13 +299,17 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                     @Override
                     public void run() {
 
-                        if (!fromMainActivity) {
+                        Log.d("TAG", " " + fromMainActivity + " Button: " + button);
+                        if (fromMainActivity == 2) {
                             if (!button) playAudio(position, 0);
                             button = false;
                         }
-                        else {
+                        else if (fromMainActivity == 0){
                             album_art_view_pager.setCurrentItem(MediaPlayerService.audioIndex);
-                            fromMainActivity = false;
+                            fromMainActivity = 1;
+                        }
+                        else {
+                            fromMainActivity = 2;
                         }
 
                     }
@@ -438,6 +462,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
         }
         else{
             playAudio(index, 0);
+            button = true;
             queueAdapter.notifyDataSetChanged();
         }
 
@@ -642,7 +667,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                         else{
 
                             now_playing_pause.setImageResource(R.drawable.pause_white);
-                            playAudio(storage.loadAudioIndexAndPosition()[0], resumePosition);
+                            playAudio(storage.loadAudioIndexAndPosition()[0], storage.loadAudioIndexAndPosition()[1]);
                         }
 
                     }
@@ -707,10 +732,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
         });
 
 
-        NowPlaying.this.runOnUiThread(seekbarRunnable);
-
-
-
+        if (MediaPlayerService.mediaPlayer != null && MediaPlayerService.mediaPlayer.isPlaying()) NowPlaying.this.runOnUiThread(seekbarRunnable);
 
         volume_seekbar.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
         volume_seekbar.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
@@ -750,7 +772,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                     speed_1_75x = findViewById(R.id.speed_1_75);
                     speed_2 = findViewById(R.id.speed_2_0);
 
-                    float x = speed.getFloat("SPEED", 0);
+                    float x = speed.getFloat("SPEED", 1.0f);
 
                     if (x == 0.25) {
                         speed_0_25x.setTextColor(getResources().getColor(R.color.programmer_green));
@@ -867,17 +889,16 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
             if (state.getState() == PlaybackStateCompat.STATE_PLAYING){
 
                 now_playing_pause.setImageResource(R.drawable.pause_white);
+                NowPlaying.this.runOnUiThread(seekbarRunnable);
             }
             else{
 
                 now_playing_pause.setImageResource(R.drawable.play_white);
+                song_handler.removeCallbacks(seekbarRunnable);
 
                 if (state.getState() != PlaybackStateCompat.STATE_PAUSED){
                     now_playing_current_position.setText(getTimeInMins(0));
-                    now_playing_seekbar.setProgress(0);
-                    totalSongNo = "/" + MediaPlayerService.audioList.size();
-                    song_number.setText((MediaPlayerService.audioIndex+1) + totalSongNo);
-                    queueAdapter.delete(MediaPlayerService.audioIndex);
+                    now_playing_seekbar.setProgress(1);
                 }
             }
 
@@ -922,8 +943,8 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
         @Override
         public void onMetadataChanged(MediaMetadataCompat metadata) {
 
-            song_title.setText(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE));
-            song_artist_album.setText(metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) + " - " + metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM));
+            song_title.setText(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getTitle());
+            song_artist_album.setText(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getArtist() + " - " + storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getAlbum());
             song_number.setText((storage.loadAudioIndexAndPosition()[0]+1) + totalSongNo);
 
             queueAdapter.notifyDataSetChanged();
@@ -965,7 +986,6 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
                     startService(playerIntent);
                     MainActivity.serviceBound = true;
-
                 }
 
 
@@ -1047,8 +1067,6 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-
-
             }
             else if (MediaPlayerService.mediaPlayer == null){
                 now_playing_seekbar.setProgress(1);
@@ -1089,6 +1107,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
                 case R.id.selected_play:
                     DataLoader.playAudio(0, songs, storage, NowPlaying.this);
+                    button = true;
                     mode.finish();
                     return true;
 
@@ -1096,6 +1115,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    queueAdapter.notifyDataSetChanged();
                     mode.finish();
                     return true;
 
@@ -1103,11 +1123,13 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(MediaPlayerService.audioIndex+1, songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    queueAdapter.notifyDataSetChanged();
                     mode.finish();
                     return true;
 
                 case R.id.selected_shuffle:
                     DataLoader.playAudio(0, songs, storage, NowPlaying.this);
+                    button = true;
                     MediaControllerCompat.getMediaController(NowPlaying.this).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
                     mode.finish();
                     return true;

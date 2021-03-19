@@ -206,13 +206,19 @@ public class QueueAdapter extends SelectableAdapter<QueueAdapter.ViewHolder> {
                                     break;
 
                                 case "Enqueue":
-                                    if (fragment == null) MediaPlayerService.audioList.add(MediaPlayerService.audioList.get(position));
+                                    if (fragment == null) {
+                                        MediaPlayerService.audioList.add(MediaPlayerService.audioList.get(position));
+                                        notifyDataSetChanged();
+                                    }
                                     else MediaPlayerService.audioList.add(songs.get(position));
                                     storage.storeAudio(MediaPlayerService.audioList);
                                     break;
 
                                 case "Play next":
-                                    if (fragment == null) MediaPlayerService.audioList.add(MediaPlayerService.audioIndex + 1, MediaPlayerService.audioList.get(position));
+                                    if (fragment == null) {
+                                        MediaPlayerService.audioList.add(MediaPlayerService.audioIndex + 1, MediaPlayerService.audioList.get(position));
+                                        notifyDataSetChanged();
+                                    }
                                     else MediaPlayerService.audioList.add(MediaPlayerService.audioIndex + 1, songs.get(position));
                                     storage.storeAudio(MediaPlayerService.audioList);
                                     break;
