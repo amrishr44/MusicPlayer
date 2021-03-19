@@ -52,6 +52,8 @@ import com.example.musicplayer.ui.search.SearchActivity;
 import com.example.musicplayer.ui.songs.SongsFragment;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 
 
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     Intent playerIntent;
 
-    private StorageUtil storageUtil;
+    private StorageUtil storage;
     private SharedPreferences startDestination;
 
     MediaSessionCompat.Token token;
@@ -148,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
                 startDestination = getSharedPreferences("START", MODE_PRIVATE);
 
-                storageUtil = new StorageUtil(MainActivity.this);
+                storage = new StorageUtil(MainActivity.this);
 
                 control_tv_title = findViewById(R.id.control_tv_title);
                 control_tv_artist = findViewById(R.id.control_tv_artist);
@@ -238,11 +240,28 @@ public class MainActivity extends AppCompatActivity {
         mediaBrowser = new MediaBrowserCompat(getApplicationContext(), new ComponentName(this, MediaPlayerService.class), connectionCallback, null);
 
 
-        if (storageUtil.loadAudio() != null) {
+        if (storage.loadAudio() != null) {
 
-            MediaPlayerService.audioList = storageUtil.loadAudio();
-            MediaPlayerService.audioIndex = storageUtil.loadAudioIndexAndPosition()[0];
+            MediaPlayerService.audioList = storage.loadAudio();
+            MediaPlayerService.audioIndex = storage.loadAudioIndexAndPosition()[0];
             if (MediaPlayerService.audioList.size() != 0 && MediaPlayerService.audioIndex >-1) MediaPlayerService.activeAudio = MediaPlayerService.audioList.get(MediaPlayerService.audioIndex);
+        }
+
+        String action = getIntent().getAction();
+
+        if (action != null) {
+
+            switch (action) {
+                case "Album":
+                    navController.navigate(R.id.action_global_albumSongsFragment2);
+                    break;
+                case "Artist":
+                    navController.navigate(R.id.action_global_artist_albums_frag);
+                    break;
+                case Intent.ACTION_VIEW:
+                    playAudioFromFile(getIntent().getData());
+                    break;
+            }
         }
 
     }
@@ -328,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 startService(playerIntent);
+                serviceBound = true;
             }
         }.run();
     }
@@ -343,11 +363,11 @@ public class MainActivity extends AppCompatActivity {
 
                 if (MediaPlayerService.activeAudio == null) {
 
-                    control_tv_title.setText(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getTitle());
-                    control_tv_artist.setText(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getArtist());
+                    control_tv_title.setText(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getTitle());
+                    control_tv_artist.setText(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getArtist());
 
-                    if (storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid() != -100) {
-                        Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid()))
+                    if (storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getAlbumid() != -100) {
+                        Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getAlbumid()))
                                 .error(R.mipmap.cassette_image_foreground)
                                 .placeholder(R.mipmap.cassette_image_foreground)
                                 .centerCrop()
@@ -356,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else{
                         MediaMetadataRetriever m = new MediaMetadataRetriever();
-                        m.setDataSource(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getData());
+                        m.setDataSource(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getData());
                         Glide.with(MainActivity.this).load(m.getEmbeddedPicture())
                                 .error(R.mipmap.cassette_image_foreground)
                                 .placeholder(R.mipmap.cassette_image_foreground)
@@ -473,11 +493,11 @@ public class MainActivity extends AppCompatActivity {
         public void onMetadataChanged(MediaMetadataCompat metadata) {
 
 
-            control_tv_title.setText(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getTitle());
-            control_tv_artist.setText(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getArtist());
+            control_tv_title.setText(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getTitle());
+            control_tv_artist.setText(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getArtist());
 
-            if (storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid() != -100) {
-                Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getAlbumid()))
+            if (storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getAlbumid() != -100) {
+                Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getAlbumid()))
                         .error(R.mipmap.cassette_image_foreground)
                         .placeholder(R.mipmap.cassette_image_foreground)
                         .centerCrop()
@@ -486,7 +506,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else{
                 MediaMetadataRetriever m = new MediaMetadataRetriever();
-                m.setDataSource(storageUtil.loadAudio().get(storageUtil.loadAudioIndexAndPosition()[0]).getData());
+                m.setDataSource(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getData());
                 Glide.with(MainActivity.this).load(m.getEmbeddedPicture())
                         .error(R.mipmap.cassette_image_foreground)
                         .placeholder(R.mipmap.cassette_image_foreground)
@@ -660,7 +680,11 @@ public class MainActivity extends AppCompatActivity {
         }
         else if (path.contains("content://com.android.externalstorage.documents/")){
             isPathInMedia = false;
-            path = "/storage" + path.substring(path.lastIndexOf("/")).replaceAll("%3A", "/").replaceAll("%20", " ").replaceAll("%2F","/").replaceAll("%2C", ",").replaceAll("%21", "!").replaceAll("%23", "#").replaceAll("%24", "$").replaceAll("%3B", ";").replaceAll("40", "@");
+            try {
+                path = "/storage" + URLDecoder.decode(path.substring(path.lastIndexOf("/")), "UTF-8").replaceFirst(":", "/");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
 
         }
 
@@ -816,7 +840,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView = null;
         preferences = null;
         playerIntent = null;
-        storageUtil = null;
+        storage = null;
         startDestination = null;
         token = null;
         mediaController = null;
