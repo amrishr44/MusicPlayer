@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -91,7 +92,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
 
         storage = new StorageUtil(getApplicationContext());
         //Listen for new Audio to play -- BroadcastReceiver
-        register_playNewAudio();
+        registerPlayNewAudio();
 
 
         new Runnable() {
@@ -177,6 +178,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
             manager.notify(NOTIFICATION_ID,notificationBuilder.build());
 
             stopForeground(false);
+            isForeground = false;
 
             removeAudioFocus();
 
@@ -278,7 +280,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
 
 
             metadataBuilder = new MediaMetadataCompat.Builder();
-            register_playNewAudio();
+            registerPlayNewAudio();
             registerBecomingNoisyReceiver();
 
             // Initialize Media Player
@@ -309,7 +311,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
         callStateListener();
 
         //Listen for new Audio to play -- BroadcastReceiver
-        register_playNewAudio();
+        registerPlayNewAudio();
 
         return START_NOT_STICKY;
 
@@ -319,14 +321,12 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
 
         if (mediaPlayer != null) {
             if (mediaPlayer.isPlaying()) {
                 unregisterReceiver(becomingNoisyReceiver);
                 unregisterReceiver(playNewAudio);
             }
-            stopMedia();
         }
 
         if (EqualizerActivity.virtualizer != null) EqualizerActivity.virtualizer.release();
@@ -396,47 +396,44 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
 
 
             // Gets information from the currently playing song and posts the notification
-
-            try {
-                InputStream is = getContentResolver().openInputStream(myuri);
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (MediaPlayerService.activeAudio.getAlbumid() != -100) {
+            if (MediaPlayerService.activeAudio.getAlbumid() != -100) {
+                try {
+                    InputStream is = getContentResolver().openInputStream(myuri);
+                    new Handler().post(new Runnable() {
+                        @Override
+                        public void run() {
 
                             notificationBigContentView.setImageViewUri(R.id.big_cv_small_album_art, myuri);
                             notificationBigContentView.setImageViewUri(R.id.big_cv_bg, myuri);
                             notificationContentView.setImageViewUri(R.id.content_view_album_art, myuri);
                         }
-                        else {
-
-                            MediaMetadataRetriever m = new MediaMetadataRetriever();
-                            m.setDataSource(MediaPlayerService.activeAudio.getData());
-                            byte[] art = m.getEmbeddedPicture();
-                            Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
-                            notificationBigContentView.setImageViewBitmap(R.id.big_cv_small_album_art, songImage);
-                            notificationBigContentView.setImageViewBitmap(R.id.big_cv_bg, songImage);
-                            notificationContentView.setImageViewBitmap(R.id.content_view_album_art, songImage);
-                        }
-                    }
-                });
-                is.close();
-            }catch (Exception ignored){
-                if (MediaPlayerService.activeAudio.getAlbumid() != -100) {
+                    });
+                    is.close();
+                } catch (Exception ignored) {
 
                     notificationBigContentView.setImageViewResource(R.id.big_cv_bg, R.mipmap.cassette_image_foreground);
                     notificationBigContentView.setImageViewResource(R.id.big_cv_small_album_art, R.mipmap.cassette_image_foreground);
                     notificationContentView.setImageViewResource(R.id.content_view_album_art, R.mipmap.cassette_image_foreground);
                 }
-                else {
+            }
+            else {
 
-                    MediaMetadataRetriever m = new MediaMetadataRetriever();
-                    m.setDataSource(MediaPlayerService.activeAudio.getData());
-                    byte[] art = m.getEmbeddedPicture();
+                MediaMetadataRetriever m = new MediaMetadataRetriever();
+                m.setDataSource(MediaPlayerService.activeAudio.getData());
+                byte[] art = m.getEmbeddedPicture();
+
+                if (art != null && art.length > 0) {
+
                     Bitmap songImage = BitmapFactory.decodeByteArray(art, 0, art.length);
                     notificationBigContentView.setImageViewBitmap(R.id.big_cv_small_album_art, songImage);
                     notificationBigContentView.setImageViewBitmap(R.id.big_cv_bg, songImage);
                     notificationContentView.setImageViewBitmap(R.id.content_view_album_art, songImage);
+                }
+                else {
+
+                    notificationBigContentView.setImageViewResource(R.id.big_cv_bg, R.mipmap.cassette_image_foreground);
+                    notificationBigContentView.setImageViewResource(R.id.big_cv_small_album_art, R.mipmap.cassette_image_foreground);
+                    notificationContentView.setImageViewResource(R.id.content_view_album_art, R.mipmap.cassette_image_foreground);
                 }
             }
 
@@ -455,6 +452,11 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
                 }
             }).start();
 
+            if (!isForeground){
+                notificationContentView.setImageViewResource(R.id.content_view_pause, R.drawable.pause_white);
+                notificationBigContentView.setImageViewResource(R.id.big_cv_pause, R.drawable.pause_white);
+            }
+
             notificationContentView.setTextViewText(R.id.content_view_title, title);
             notificationContentView.setTextViewText(R.id.content_view_artist_album, artist + " - " + album);
 
@@ -466,21 +468,24 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
                     .setCustomBigContentView(notificationBigContentView);
 
 
-            new Handler().postDelayed(new Runnable() {
+            new Handler().post(new Runnable() {
                 @Override
                 public void run() {
                     if (!isForeground) {
-                        startForeground(NOTIFICATION_ID,notificationBuilder.build());
+                        startForeground(NOTIFICATION_ID, notificationBuilder.build());
                         isForeground = true;
                     }
                     else manager.notify(NOTIFICATION_ID, notificationBuilder.build());
                 }
-            }, 0);
+            });
 
             if (preferences.getBoolean("LOCKSCREEN", true)) {
                 // Lockscreen wallpaper is changed to the song album art while playing
-                metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeResource(getResources(), R.drawable.cassette_green));
-
+                try {
+                    metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, MediaStore.Images.Media.getBitmap(getContentResolver(), myuri));
+                } catch (Exception e) {
+                    metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeResource(getResources(), R.mipmap.cassette_green_foreground));
+                }
             }
             else metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, null);
 
@@ -534,7 +539,6 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
             storage.storeAudioIndexAndPostion(audioIndex, resumePosition);
 
             unregisterReceiver(becomingNoisyReceiver);
-            unregisterReceiver(playNewAudio);
 
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -545,6 +549,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
            removeAudioFocus();
 
             stopForeground(false);
+            isForeground = false;
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -587,7 +592,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
             }).start();
 
             registerBecomingNoisyReceiver();
-            register_playNewAudio();
+            registerPlayNewAudio();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 mediaSession.setPlaybackState(playbackState.setState(PlaybackStateCompat.STATE_PLAYING, resumePosition, mediaPlayer.getPlaybackParams().getSpeed()).build());
@@ -689,7 +694,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
     };
 
 
-    private void register_playNewAudio() {
+    private void registerPlayNewAudio() {
         //Register playNewMedia receiver
 
         IntentFilter filter = new IntentFilter(SongsFragment.Broadcast_PLAY_NEW_AUDIO);
@@ -815,6 +820,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
             storage.storeAudioIndexAndPostion(audioIndex, resumePosition);
             mediaSession.setPlaybackState(playbackState.setState(PlaybackStateCompat.STATE_STOPPED, resumePosition , (float) 1.0).build());
             stopForeground(true);
+            isForeground = false;
             removeAudioFocus();
             if (phoneStateListener != null) {
                 telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_NONE);
@@ -826,6 +832,7 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
             if (EqualizerActivity.virtualizer != null) EqualizerActivity.virtualizer.release();
             if (EqualizerActivity.bassBoost != null) EqualizerActivity.bassBoost.release();
             if (EqualizerActivity.equalizer != null) EqualizerActivity.equalizer.release();
+            stopMedia();
             stopSelf();
         }
 
