@@ -20,6 +20,10 @@ A free Music Player that plays local content from your phone.
 ![image](/screenshots/image1.png)
 ![image](/screenshots/image4.png)
 
+## APK
+
+[MusicPlayer APK File](https://github.com/amrishr44/MusicPlayer/raw/master/MusicPlayer.apk)
+
 ## License
 
 You can do as you like with the source code.
