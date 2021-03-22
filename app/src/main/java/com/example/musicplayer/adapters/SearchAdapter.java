@@ -12,8 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -267,7 +265,7 @@ public class SearchAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                         public void onClick(View v) {
 
                             tempSongs = new ArrayList<>();
-                            tempSongs.add(songs.get(position));
+                            tempSongs.add(songs.get(position-1));
 
                             PopupMenu menu = new PopupMenu(context, v);
 
@@ -282,18 +280,18 @@ public class SearchAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                                             break;
 
                                         case "Enqueue":
-                                            MediaPlayerService.audioList.add(songs.get(position));
+                                            MediaPlayerService.audioList.add(songs.get(position-1));
                                             storage.storeAudio(MediaPlayerService.audioList);
                                             break;
 
                                         case "Play next":
-                                            MediaPlayerService.audioList.add(MediaPlayerService.audioIndex + 1, songs.get(position));
+                                            MediaPlayerService.audioList.add(MediaPlayerService.audioIndex + 1, songs.get(position-1));
                                             storage.storeAudio(MediaPlayerService.audioList);
                                             break;
 
                                         case "Shuffle":
-                                            DataLoader.playAudio(position, tempSongs, storage, context);
-                                            MediaControllerCompat.getMediaController((AppCompatActivity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                                            DataLoader.playAudio(position-1, songs, storage, context);
+                                            NowPlaying.shuffle = true;
                                             break;
 
                                         case "Add to playlist":
@@ -302,12 +300,12 @@ public class SearchAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
 
                                         case "Lyrics":
                                             Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-                                            intent.putExtra("query", songs.get(position).getTitle() + " " + songs.get(position).getArtist() + " lyrics");
+                                            intent.putExtra("query", songs.get(position-1).getTitle() + " " + songs.get(position-1).getArtist() + " lyrics");
                                             context.startActivity(intent);
                                             break;
 
                                         case "Edit tags":
-                                            EditTags.song = songs.get(position);
+                                            EditTags.song = songs.get(position-1);
                                             context.startActivity(new Intent(context, EditTags.class));
                                             break;
 
@@ -322,13 +320,13 @@ public class SearchAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                                                 } else {
                                                     RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songs.get(position).getId()));
                                                     if (toast != null) toast = null;
-                                                    toast = Toast.makeText(context, songs.get(position).getTitle() + " set as Ringtone!", Toast.LENGTH_LONG);
+                                                    toast = Toast.makeText(context, songs.get(position-1).getTitle() + " set as Ringtone!", Toast.LENGTH_LONG);
                                                     toast.show();
                                                 }
                                             } else {
                                                 RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, songs.get(position).getId()));
                                                 if (toast != null) toast = null;
-                                                toast = Toast.makeText(context, songs.get(position).getTitle() + " set as Ringtone!", Toast.LENGTH_LONG);
+                                                toast = Toast.makeText(context, songs.get(position-1).getTitle() + " set as Ringtone!", Toast.LENGTH_LONG);
                                                 toast.show();
                                             }
                                             break;
@@ -388,7 +386,7 @@ public class SearchAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem item) {
 
-                                    tempSongs = DataLoader.loadAudio(albums.get(position).getId(), 1, context, sortAlbumSongs);
+                                    tempSongs = DataLoader.loadAudio(albums.get(position-songSize-1).getId(), 1, context, sortAlbumSongs);
 
                                     switch (item.getTitle().toString()) {
 
@@ -407,8 +405,8 @@ public class SearchAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                                             break;
 
                                         case "Shuffle":
-                                            DataLoader.playAudio(position, tempSongs, storage, context);
-                                            MediaControllerCompat.getMediaController((AppCompatActivity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                                            DataLoader.playAudio(0, tempSongs, storage, context);
+                                            NowPlaying.shuffle = true;
                                             break;
 
                                         case "Add to playlist":
@@ -466,7 +464,7 @@ public class SearchAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                                 @Override
                                 public boolean onMenuItemClick(MenuItem item) {
 
-                                    tempSongs = loadArtistAudio(artists.get(position).getId());
+                                    tempSongs = loadArtistAudio(artists.get(position-songSize-albumSize-1).getId());
 
                                     switch (item.getTitle().toString()) {
 
@@ -485,8 +483,8 @@ public class SearchAdapter extends SelectableAdapter<RecyclerView.ViewHolder> {
                                             break;
 
                                         case "Shuffle":
-                                            DataLoader.playAudio(position, tempSongs, storage, context);
-                                            MediaControllerCompat.getMediaController((AppCompatActivity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                                            DataLoader.playAudio(0, tempSongs, storage, context);
+                                            NowPlaying.shuffle = true;
                                             break;
 
                                         case "Add to playlist":

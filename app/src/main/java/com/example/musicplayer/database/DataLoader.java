@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -67,13 +68,13 @@ public class DataLoader {
             context.sendBroadcast(broadcastIntent);
         }
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
                 context.startActivity(new Intent(context, NowPlaying.class));
-//            }
-//        }, 1000);
+            }
+        }, 1000);
 
     }
 
@@ -298,6 +299,8 @@ public class DataLoader {
                         }
                         handler.removeCallbacks(runnable);
                         newPlaylist.dismiss();
+
+                        Toast.makeText(context, "Playlist created!", Toast.LENGTH_SHORT).show();
 
                     }
                 });

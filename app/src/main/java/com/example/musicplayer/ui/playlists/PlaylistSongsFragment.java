@@ -1,6 +1,5 @@
 package com.example.musicplayer.ui.playlists;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -11,9 +10,8 @@ import android.database.Cursor;
 import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +33,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.musicplayer.MainActivity;
 import com.example.musicplayer.MediaPlayerService;
 import com.example.musicplayer.R;
 import com.example.musicplayer.StorageUtil;
@@ -45,6 +42,7 @@ import com.example.musicplayer.adapters.QueueAdapter;
 import com.example.musicplayer.adapters.SongChanged;
 import com.example.musicplayer.database.DataLoader;
 import com.example.musicplayer.database.Songs;
+import com.example.musicplayer.nowplaying.NowPlaying;
 import com.example.musicplayer.ui.SettingsActivity;
 import com.example.musicplayer.ui.equalizer.EqualizerActivity;
 import com.example.musicplayer.ui.folders.FoldersFragment;
@@ -57,7 +55,7 @@ import java.util.Collections;
 import java.util.Random;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.musicplayer.MainActivity.secondary_index;
+import static com.example.musicplayer.MainActivity.index;
 
 
 public class PlaylistSongsFragment extends Fragment  implements ItemClicked, PlaylistItemClicked, SongChanged {
@@ -65,6 +63,8 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
    Toast toast;
 
     private ArrayList<Songs> playlistSongs;
+
+    private Parcelable recyclerviewParcelable;
 
     private View root;
     private RecyclerView playlistRecyclerView;
@@ -219,11 +219,13 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
         ImageView small_playlist_art = root.findViewById(R.id.small_playlist_art);
 
 
-        Glide.with(this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), PlaylistsFragment.playlistId))
-                .centerCrop().error(R.drawable.cassettes).into(app_bar_image);
+        if (playlistSongs.size() > 0) {
+            Glide.with(this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), playlistSongs.get(0).getAlbumid()))
+                    .centerCrop().error(R.drawable.cassettes).into(app_bar_image);
 
-        Glide.with(this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), PlaylistsFragment.playlistId))
-                .centerCrop().error(R.drawable.cassettes).into(small_playlist_art);
+            Glide.with(this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), playlistSongs.get(0).getAlbumid()))
+                    .centerCrop().error(R.drawable.cassettes).into(small_playlist_art);
+        }
 
         Button play_all = root.findViewById(R.id.playlist_play_all);
         Button shuffle_all = root.findViewById(R.id.playlist_shuffle_all);
@@ -242,7 +244,7 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
             public void onClick(View v) {
 
                 DataLoader.playAudio(new Random().nextInt(playlistSongs.size()), playlistSongs, storage, context);
-                MediaControllerCompat.getMediaController(((AppCompatActivity)getActivity())).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                NowPlaying.shuffle = true;
             }
         });
 
@@ -263,7 +265,7 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
 
         fastScroller = root.findViewById(R.id.fast_scroller_album);
 
-        playlistRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        playlistRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -313,18 +315,19 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
 
             queueAdapter = new QueueAdapter(context, PlaylistSongsFragment.this, playlistSongs, itemTouchHelper);
             playlistRecyclerView.setAdapter(queueAdapter);
-            playlistRecyclerView.scrollToPosition(MainActivity.secondary_index);
+            if (recyclerviewParcelable != null){
+                playlistRecyclerView.getLayoutManager().onRestoreInstanceState(recyclerviewParcelable);
+            }
         }
     };
 
-
-
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
 
-        itemTouchHelper = null;
+        recyclerviewParcelable = playlistRecyclerView.getLayoutManager().onSaveInstanceState();
     }
+
 
     @Override
     public void onItemClicked(int index) {
@@ -333,7 +336,6 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
             toggleSelection(index);
         }
         else{
-            MainActivity.secondary_index = index;
             DataLoader.playAudio(index, playlistSongs, storage, context);
             queueAdapter.notifyDataSetChanged();
         }
@@ -372,10 +374,10 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
         }
 
 
-
         contentValues.put("play_order", playOrder);
-
         contentResolver.insert(uri,contentValues);
+
+        Toast.makeText(context, "Song has been added to the playlist!", Toast.LENGTH_SHORT).show();
 
         dialog.dismiss();
 
@@ -414,12 +416,15 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
 
                 for (int i =0; i<mySongs.size(); i++) {
 
+                    contentValues.clear();
                     contentValues.put("audio_id", mySongs.get(i).getId());
-
                     contentValues.put("play_order", playOrder);
-
                     contentResolver.insert(uri, contentValues);
+                    playOrder++;
                 }
+
+                if (mySongs.size()>1) Toast.makeText(context, mySongs.size() + " songs have been added to the playlist!", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(context, "1 song has been added to the playlist!", Toast.LENGTH_SHORT).show();
 
             }
         }.run();
@@ -463,9 +468,8 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
                     break;
 
                 case "Shuffle All":
-
                     DataLoader.playAudio(new Random().nextInt(playlistSongs.size()), playlistSongs, storage, context);
-                    MediaControllerCompat.getMediaController((Activity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    NowPlaying.shuffle = true;
                     break;
 
                 case "Save Now Playing":
@@ -523,39 +527,43 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
                 songs.add(playlistSongs.get(indices.get(i)));
             }
 
-            switch (item.getItemId()) {
+            switch (item.getTitle().toString()) {
 
-                case R.id.selected_play:
+                case "Play":
                     DataLoader.playAudio(0, songs, storage, context);
                     mode.finish();
                     return true;
 
-                case R.id.selected_enqueue:
+                case "Enqueue":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_play_next:
+                case "Play next":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(MediaPlayerService.audioIndex+1, songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_shuffle:
+                case "Shuffle":
                     DataLoader.playAudio(0, songs, storage, context);
-                    MediaControllerCompat.getMediaController(getActivity()).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    NowPlaying.shuffle = true;
                     mode.finish();
                     return true;
 
-                case R.id.selected_add_to_playlist:
+                case "Add to playlist":
                     DataLoader.addToPlaylist(songs, context, PlaylistSongsFragment.this);
                     mode.finish();
                     return true;
 
-                case R.id.selected_delete:
+                case "Delete":
                     SongsFragment.deleteSongs(songs, context);
                     queueAdapter.notifyDataSetChanged();
                     mode.finish();
@@ -600,7 +608,7 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
 
                     for(int i = 0; i<MediaPlayerService.audioList.size(); i++){
                         Songs song = MediaPlayerService.audioList.get(i);
-                        if (song.getId() == (playlistSongs.get(secondary_index).getId())){
+                        if (song.getId() == (playlistSongs.get(index).getId())){
                             x = i;
                             break;
                         }
@@ -613,10 +621,10 @@ public class PlaylistSongsFragment extends Fragment  implements ItemClicked, Pla
                         storage.storeAudio(MediaPlayerService.audioList);
                     }
 
-                    playlistSongs.get(secondary_index).setTitle(newData.get(0));
-                    playlistSongs.get(secondary_index).setAlbum(newData.get(1));
-                    playlistSongs.get(secondary_index).setArtist(newData.get(2));
-                    queueAdapter.notifyItemChanged(secondary_index);
+                    playlistSongs.get(index).setTitle(newData.get(0));
+                    playlistSongs.get(index).setAlbum(newData.get(1));
+                    playlistSongs.get(index).setArtist(newData.get(2));
+                    queueAdapter.notifyItemChanged(index);
 
                 }
             }

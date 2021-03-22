@@ -1,7 +1,6 @@
 package com.example.musicplayer.ui.folders;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -12,9 +11,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +44,7 @@ import com.example.musicplayer.adapters.PlaylistItemClicked;
 import com.example.musicplayer.adapters.SongChanged;
 import com.example.musicplayer.database.DataLoader;
 import com.example.musicplayer.database.Songs;
+import com.example.musicplayer.nowplaying.NowPlaying;
 import com.example.musicplayer.ui.SettingsActivity;
 import com.example.musicplayer.ui.equalizer.EqualizerActivity;
 import com.example.musicplayer.ui.search.SearchActivity;
@@ -67,6 +66,8 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
     public static int slashCount = 0;
     public static String currentPath = "/";
     public static boolean isFolders;
+
+    private Parcelable recyclerviewParcelable;
 
     private ArrayList<Songs> mySongs;
     private List<String> list;
@@ -100,6 +101,10 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
         sort = getActivity().getSharedPreferences("Sort", Context.MODE_PRIVATE);
         storage = new StorageUtil(context);
 
+        foldersRecyclerView = root.findViewById(R.id.folders_recycler_view);
+        foldersRecyclerView.setHasFixedSize(true);
+        foldersRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+
         return root;
     }
 
@@ -108,9 +113,6 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
         super.onActivityCreated(savedInstanceState);
 
 
-        foldersRecyclerView = root.findViewById(R.id.folders_recycler_view);
-        foldersRecyclerView.setHasFixedSize(true);
-        foldersRecyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE )!= PackageManager.PERMISSION_GRANTED) {
 
@@ -124,7 +126,7 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
         fastScroller = root.findViewById(R.id.fast_scroller_album);
         fastScroller.setPopupDrawable(null);
 
-        foldersRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        foldersRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -191,6 +193,12 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
         isFolders = true;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        recyclerviewParcelable = foldersRecyclerView.getLayoutManager().onSaveInstanceState();
+    }
 
     @Override
     public void onDestroy() {
@@ -317,7 +325,6 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
     public void onFolderItemClicked(int index) {
 
         if (actionMode == null) {
-            MainActivity.index = 0;
 
             if (!FoldersFragment.currentPath.equals("/")) {
 
@@ -374,7 +381,6 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
        else ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("/");
 
        songLoader.run();
-       songsInCurrentPath.run();
        folderAdapter.run();
    }
 
@@ -382,15 +388,10 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
        @Override
        public void run() {
            mySongs = loadAudio();
+           mySongs = loadSongs(currentPath);
        }
    };
 
-    private final Runnable songsInCurrentPath = new Runnable() {
-        @Override
-        public void run() {
-            mySongs = loadSongs(currentPath);
-        }
-    };
 
     private final Runnable folderAdapter = new Runnable() {
         @Override
@@ -400,7 +401,9 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
             Collections.sort(list);
             myAdapter = new FoldersAdapter(getContext(), FragmentManager.findFragment(root), folders2, mySongs, list);
             foldersRecyclerView.setAdapter(myAdapter);
-            foldersRecyclerView.scrollToPosition(MainActivity.index);
+            if (recyclerviewParcelable != null){
+                foldersRecyclerView.getLayoutManager().onRestoreInstanceState(recyclerviewParcelable);
+            }
         }
     };
 
@@ -432,8 +435,8 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
         }
 
         contentValues.put("play_order", playOrder);
-
         contentResolver.insert(uri,contentValues);
+        Toast.makeText(context, "Song has been added to the playlist!", Toast.LENGTH_SHORT).show();
 
         dialog.dismiss();
 
@@ -472,13 +475,15 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
 
                 for (int i =0; i<mySongs.size(); i++) {
 
+                    contentValues.clear();
                     contentValues.put("audio_id", mySongs.get(i).getId());
-
                     contentValues.put("play_order", playOrder);
-
                     contentResolver.insert(uri, contentValues);
+                    playOrder++;
                 }
 
+                if (mySongs.size()>1) Toast.makeText(context, mySongs.size() + " songs have been added to the playlist!", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(context, "1 song has been added to the playlist!", Toast.LENGTH_SHORT).show();
             }
         }.run();
     }
@@ -508,7 +513,7 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
                 case "Shuffle All":
                     ArrayList<Songs> shuffleSongs = myAdapter.loadFolderAudio(currentPath);
                     DataLoader.playAudio(new Random().nextInt(shuffleSongs.size()), shuffleSongs, storage, context);
-                    MediaControllerCompat.getMediaController((Activity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    NowPlaying.shuffle = true;
                     break;
 
                 case "Save Now Playing":
@@ -645,39 +650,43 @@ public class FoldersFragment extends Fragment implements ItemClicked, FolderItem
             }
             else songs.addAll(myAdapter.loadFolderAudio("/"));
 
-            switch (item.getItemId()) {
+            switch (item.getTitle().toString()) {
 
-                case R.id.selected_play:
+                case "Play":
                     DataLoader.playAudio(0, songs, storage, context);
                     mode.finish();
                     return true;
 
-                case R.id.selected_enqueue:
+                case "Enqueue":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_play_next:
+                case "Play next":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(MediaPlayerService.audioIndex+1, songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_shuffle:
+                case "Shuffle":
                     DataLoader.playAudio(0, songs, storage, context);
-                    MediaControllerCompat.getMediaController(getActivity()).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    NowPlaying.shuffle = true;
                     mode.finish();
                     return true;
 
-                case R.id.selected_add_to_playlist:
+                case "Add to playlist":
                     DataLoader.addToPlaylist(songs, context, FoldersFragment.this);
                     mode.finish();
                     return true;
 
-                case R.id.selected_delete:
+                case "Delete":
                     SongsFragment.deleteSongs(songs, context);
                     myAdapter.notifyDataSetChanged();
                     mode.finish();

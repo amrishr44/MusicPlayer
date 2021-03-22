@@ -65,11 +65,11 @@ public class SettingsActivity extends AppCompatActivity {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
 
                 if (checkedId == R.id.radioButton_none) preferences.edit().putString("START", "None").apply();
-                else if (checkedId == R.id.radioButton_songs) preferences.edit().putString("START", String.valueOf(R.string.menu_songs)).apply();
-                else if (checkedId == R.id.radioButton_albums) preferences.edit().putString("START", String.valueOf(R.string.menu_albums)).apply();
-                else if (checkedId == R.id.radioButton_artists) preferences.edit().putString("START", String.valueOf(R.string.menu_artists)).apply();
-                else if (checkedId == R.id.radioButton_folders) preferences.edit().putString("START", String.valueOf(R.string.menu_folders)).apply();
-                else if (checkedId == R.id.radioButton_playlists) preferences.edit().putString("START", String.valueOf(R.string.menu_playlist)).apply();
+                else if (checkedId == R.id.radioButton_songs) preferences.edit().putString("START", "Songs").apply();
+                else if (checkedId == R.id.radioButton_albums) preferences.edit().putString("START", "Albums").apply();
+                else if (checkedId == R.id.radioButton_artists) preferences.edit().putString("START", "Artists").apply();
+                else if (checkedId == R.id.radioButton_folders) preferences.edit().putString("START", "Folders").apply();
+                else if (checkedId == R.id.radioButton_playlists) preferences.edit().putString("START", "Playlists").apply();
             }
         });
 

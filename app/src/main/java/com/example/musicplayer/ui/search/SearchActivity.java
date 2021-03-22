@@ -69,9 +69,6 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
     public static boolean openAlbumSongs = false;
     public static boolean openArtistAlbums = false;
 
-    private int index = 0;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -455,7 +452,6 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
             toggleSelection(index);
         }
         else{
-            this.index = index;
             playAudio(song);
             myAdapter.notifyDataSetChanged();
         }
@@ -475,11 +471,10 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
             toggleSelection(index);
         }
         else {
-            this.index = index;
             myAdapter.notifyDataSetChanged();
             AlbumsFragment.album = album;
             openAlbumSongs = true;
-            onBackPressed();
+            startActivity(new Intent(this, MainActivity.class));
         }
     }
 
@@ -495,11 +490,10 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
             toggleSelection(index);
         }
         else {
-            this.index = index;
             myAdapter.notifyDataSetChanged();
             ArtistsFragment.artist = artist;
             openArtistAlbums = true;
-            onBackPressed();
+            startActivity(new Intent(this, MainActivity.class));
         }
     }
 
@@ -514,7 +508,7 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
         if (!MainActivity.serviceBound) {
             //Store Serializable audioList to SharedPreferences
             StorageUtil storage = new StorageUtil(this);
-            ArrayList<Songs> songs = new ArrayList<Songs>();
+            ArrayList<Songs> songs = new ArrayList<>();
             songs.add(song);
             storage.storeAudio(songs);
             storage.storeAudioIndexAndPostion(0, 0);
@@ -529,7 +523,7 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
         else {
             //Store the new audioIndex to SharedPreferences
             StorageUtil storage = new StorageUtil(this);
-            ArrayList<Songs> songs = new ArrayList<Songs>();
+            ArrayList<Songs> songs = new ArrayList<>();
             songs.add(song);
             storage.storeAudio(songs);
             storage.storeAudioIndexAndPostion(0, 0);
@@ -589,12 +583,15 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
 
                 for (int i =0; i<mySongs.size(); i++) {
 
+                    contentValues.clear();
                     contentValues.put("audio_id", mySongs.get(i).getId());
-
                     contentValues.put("play_order", playOrder);
-
                     contentResolver.insert(uri, contentValues);
+                    playOrder++;
                 }
+                if (mySongs.size()>1) Toast.makeText(SearchActivity.this, mySongs.size() + "songs have been added to the playlist!", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(SearchActivity.this, "1 song has been added to the playlist!", Toast.LENGTH_SHORT).show();
+
 
             }
         }.run();
@@ -632,39 +629,42 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
                 else selectedSongs.addAll(myAdapter.loadArtistAudio(artists.get(indices.get(i)-songSize-albumSize-1).getId()));
             }
 
-            switch (item.getItemId()) {
+            switch (item.getTitle().toString()) {
 
-                case R.id.selected_play:
+                case "Play":
                     DataLoader.playAudio(0, selectedSongs, storage, SearchActivity.this);
                     mode.finish();
                     return true;
 
-                case R.id.selected_enqueue:
+                case "Enqueue":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(selectedSongs);
                     else MediaPlayerService.audioList = selectedSongs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (selectedSongs.size()>1) Toast.makeText(SearchActivity.this, selectedSongs.size() + "songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(SearchActivity.this, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_play_next:
+                case "Play next":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(MediaPlayerService.audioIndex+1, selectedSongs);
                     else MediaPlayerService.audioList = selectedSongs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (selectedSongs.size()>1) Toast.makeText(SearchActivity.this, selectedSongs.size() + "songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(SearchActivity.this, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_shuffle:
+                case "Shuffle":
                     playAudio(selectedSongs);
-
                     mode.finish();
                     return true;
 
-                case R.id.selected_add_to_playlist:
+                case "Add to playlist":
                     DataLoader.addToPlaylist(selectedSongs, SearchActivity.this, null);
                     mode.finish();
                     return true;
 
-                case R.id.selected_delete:
+                case "Delete":
                     SongsFragment.deleteSongs(selectedSongs, SearchActivity.this);
                     myAdapter.notifyDataSetChanged();
                     mode.finish();
@@ -735,7 +735,7 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
 
     @Override
     public boolean onSupportNavigateUp() {
-        this.finish();
+        onBackPressed();
         return true;
     }
 
@@ -763,13 +763,6 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-        recyclerView.scrollToPosition(index);
-    }
-
-    @Override
     protected void onDestroy() {
         recyclerView = null;
         myAdapter = null;
@@ -783,6 +776,14 @@ public class SearchActivity extends AppCompatActivity implements SearchSongClick
         actionModeCallback = null;
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isTaskRoot()){
+            startActivity(new Intent(this, MainActivity.class));
+        }
+        super.onBackPressed();
     }
 }
 

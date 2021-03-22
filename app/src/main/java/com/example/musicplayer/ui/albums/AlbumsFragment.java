@@ -1,7 +1,6 @@
 package com.example.musicplayer.ui.albums;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -12,9 +11,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,12 +29,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.musicplayer.MainActivity;
 import com.example.musicplayer.MediaPlayerService;
 import com.example.musicplayer.R;
 import com.example.musicplayer.StorageUtil;
@@ -47,6 +44,7 @@ import com.example.musicplayer.adapters.SongChanged;
 import com.example.musicplayer.database.Albums;
 import com.example.musicplayer.database.DataLoader;
 import com.example.musicplayer.database.Songs;
+import com.example.musicplayer.nowplaying.NowPlaying;
 import com.example.musicplayer.ui.SettingsActivity;
 import com.example.musicplayer.ui.equalizer.EqualizerActivity;
 import com.example.musicplayer.ui.folders.FoldersFragment;
@@ -65,6 +63,7 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
     private ArrayList<Albums> myAlbums;
 
     private boolean shouldRefresh = false;
+    private Parcelable recyclerviewParcelable;
 
     private Menu menu;
     private SharedPreferences sort;
@@ -78,7 +77,7 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
     RecyclerViewFastScroller fastScroller;
 
     private ActionMode actionMode;
-    private AlbumsFragment.ActionModeCallback actionModeCallback = new AlbumsFragment.ActionModeCallback();
+    private final AlbumsFragment.ActionModeCallback actionModeCallback = new AlbumsFragment.ActionModeCallback();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -91,12 +90,6 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
         storage = new StorageUtil(context);
 
         root = inflater.inflate(R.layout.fragment_albums, container, false);
-        return root;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
 
         Toolbar toolbar = ((AppCompatActivity)getActivity()).findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.nav_green);
@@ -113,19 +106,28 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
         }
         else{
 
-            albumsViewModel = ViewModelProviders.of(this).get(AlbumsViewModel.class);
+            albumsViewModel = new ViewModelProvider(this).get(AlbumsViewModel.class);
 
 
             albumsViewModel.getAlbums().observe(getViewLifecycleOwner(), new Observer<ArrayList<Albums>>() {
                 @Override
                 public void onChanged(ArrayList<Albums> albums) {
 
-                    myAlbums = albums;
-                    albumAdapterRunnable.run();
+                    if (!albums.equals(myAlbums)) {
+                        myAlbums = albums;
+                        albumAdapterRunnable.run();
+                    }
                 }
             });
 
         }
+
+        return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         fastScroller = root.findViewById(R.id.fast_scroller_album);
 
@@ -133,7 +135,7 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
             fastScroller.setPopupDrawable(null);
         }
 
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -184,54 +186,18 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode == UNIQUE_REQUEST_CODE){
-
-            try {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-                    albumsViewModel = ViewModelProviders.of(this).get(AlbumsViewModel.class);
-
-
-                    albumsViewModel.getAlbums().observe(getViewLifecycleOwner(), new Observer<ArrayList<Albums>>() {
-                        @Override
-                        public void onChanged(ArrayList<Albums> albums) {
-
-                            myAlbums = albums;
-                            albumAdapterRunnable.run();
-                        }
-                    });
-
-
-                }
-                else{
-
-                    Toast.makeText(context, "What the hell bro!", Toast.LENGTH_SHORT).show();
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-    }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE )== PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(getContext(),Manifest.permission.MEDIA_CONTENT_CONTROL) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE )== PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(context,Manifest.permission.MEDIA_CONTENT_CONTROL) == PackageManager.PERMISSION_GRANTED) {
 
             shouldRefresh = true;
         }
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
+        recyclerviewParcelable = recyclerView.getLayoutManager().onSaveInstanceState();
 
-        shouldRefresh = false;
     }
 
 
@@ -239,8 +205,6 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
     public void onItemClicked(int index) {
 
         if (actionMode == null) {
-
-            MainActivity.index = index;
 
             album = myAlbums.get(index);
             NavHostFragment.findNavController(this).navigate(R.id.action_nav_albums_to_albumSongsFragment2);
@@ -261,9 +225,9 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
 
             myAdapter = new AlbumsAdapter(myAlbums, FragmentManager.findFragment(root), context);
             recyclerView.setAdapter(myAdapter);
-
-            recyclerView.scrollToPosition(MainActivity.index);
-
+            if (recyclerviewParcelable != null){
+                recyclerView.getLayoutManager().onRestoreInstanceState(recyclerviewParcelable);
+            }
         }
     };
 
@@ -306,12 +270,15 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
 
                 for (int i =0; i<mySongs.size(); i++) {
 
+                    contentValues.clear();
                     contentValues.put("audio_id", mySongs.get(i).getId());
-
                     contentValues.put("play_order", playOrder);
-
                     contentResolver.insert(uri, contentValues);
+                    playOrder++;
                 }
+
+                if (mySongs.size()>1) Toast.makeText(context, mySongs.size() + " songs have been added to the playlist!", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(context, "1 song has been added to the playlist!", Toast.LENGTH_SHORT).show();
 
             }
         }.run();
@@ -350,7 +317,7 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
 
                     }
                     DataLoader.playAudio(new Random().nextInt(shuffleSongs.size()), shuffleSongs, storage, context);
-                    MediaControllerCompat.getMediaController((Activity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    NowPlaying.shuffle = true;
                     break;
 
                 case "Save Now Playing":
@@ -406,13 +373,12 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
                     if (!item.isChecked()) {
                         item.setChecked(true);
                         sort.edit().putBoolean("AlbumReverse", true).apply();
-                        albumsViewModel.refresh();
                     }
                     else {
                         item.setChecked(false);
                         sort.edit().putBoolean("AlbumReverse", false).apply();
-                        albumsViewModel.refresh();
                     }
+                    albumsViewModel.refresh();
                     break;
 
                 default:
@@ -470,39 +436,43 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
 
             }
 
-            switch (item.getItemId()) {
+            switch (item.getTitle().toString()) {
 
-                case R.id.selected_play:
+                case "Play":
                     DataLoader.playAudio(0, songs, storage, context);
                     mode.finish();
                     return true;
 
-                case R.id.selected_enqueue:
+                case "Enqueue":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_play_next:
+                case "Play next":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(MediaPlayerService.audioIndex+1, songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_shuffle:
+                case "Shuffle":
                     DataLoader.playAudio(0, songs, storage, context);
-                    MediaControllerCompat.getMediaController(getActivity()).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    NowPlaying.shuffle = true;
                     mode.finish();
                     return true;
 
-                case R.id.selected_add_to_playlist:
+                case "Add to playlist":
                     DataLoader.addToPlaylist(songs, context, AlbumsFragment.this);
                     mode.finish();
                     return true;
 
-                case R.id.selected_delete:
+                case "Delete":
                     SongsFragment.deleteSongs(songs, context);
                     myAdapter.notifyDataSetChanged();
                     mode.finish();
@@ -536,7 +506,6 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
 
     @Override
     public void onDestroyView() {
-        myAlbums = null;
         menu = null;
         sort = null;
         storage = null;
@@ -549,6 +518,39 @@ public class AlbumsFragment extends Fragment implements ItemClicked, PlaylistIte
         actionMode = null;
 
         super.onDestroyView();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == UNIQUE_REQUEST_CODE){
+
+            try {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                    albumsViewModel = new ViewModelProvider(this).get(AlbumsViewModel.class);
+
+
+                    albumsViewModel.getAlbums().observe(getViewLifecycleOwner(), new Observer<ArrayList<Albums>>() {
+                        @Override
+                        public void onChanged(ArrayList<Albums> albums) {
+
+                            myAlbums = albums;
+                            albumAdapterRunnable.run();
+                        }
+                    });
+
+
+                }
+                else{
+
+                    Toast.makeText(context, "What the hell bro!", Toast.LENGTH_SHORT).show();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
     }
 
 }

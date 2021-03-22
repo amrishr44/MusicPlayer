@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -44,10 +45,7 @@ import com.bumptech.glide.Glide;
 import com.example.musicplayer.adapters.SongChanged;
 import com.example.musicplayer.database.Songs;
 import com.example.musicplayer.nowplaying.NowPlaying;
-import com.example.musicplayer.ui.albums.AlbumSongsFragment;
-import com.example.musicplayer.ui.artists.ArtistAlbumsFragment;
 import com.example.musicplayer.ui.folders.FoldersFragment;
-import com.example.musicplayer.ui.playlists.PlaylistSongsFragment;
 import com.example.musicplayer.ui.search.SearchActivity;
 import com.example.musicplayer.ui.songs.SongsFragment;
 import com.google.android.material.navigation.NavigationView;
@@ -64,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int UNIQUE_REQUEST_CODE = 69;
     public static boolean serviceBound = false;
     public static int index = 0;
-    public static int secondary_index = 0;
 
     int bottom;
 
@@ -126,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
      };
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -176,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
                         R.id.nav_folders, R.id.nav_songs, R.id.nav_playlists, R.id.nav_artists, R.id.nav_albums)
                         .setDrawerLayout(drawer)
                         .build();
+
+                getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_green);
+
                 navController = Navigation.findNavController(MainActivity.this, R.id.nav_host_fragment);
                 NavigationUI.setupActionBarWithNavController(MainActivity.this, navController, mAppBarConfiguration);
                 NavigationUI.setupWithNavController(navigationView, navController);
@@ -208,7 +208,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     
                 }
-                navController.setGraph(navGraph);
+
+                if (savedInstanceState != null && savedInstanceState.getBundle("BUNDLE_NAVSTATE") != null) {
+                    navController.restoreState(savedInstanceState.getBundle("BUNDLE_NAVSTATE"));
+                }
+                else navController.setGraph(navGraph);
 
 
             }
@@ -278,12 +282,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onSupportNavigateUp() {
 
-        if (!getForegroundFragment().getClass().getSimpleName().equals(AlbumSongsFragment.class.getSimpleName()) && !getForegroundFragment().getClass().getSimpleName().equals(ArtistAlbumsFragment.class.getSimpleName())
-                && !getForegroundFragment().getClass().getSimpleName().equals(PlaylistSongsFragment.class.getSimpleName())) {
-
-            index = 0;
-        }
-        secondary_index = 0;
+        index = 0;
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
@@ -301,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
                 mediaBrowser.connect();
             }
         }.run();
-
     }
 
     @Override
@@ -325,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().getItem(2).setVisible(preferences.getBoolean("ARTISTS", true));
         navigationView.getMenu().getItem(3).setVisible(preferences.getBoolean("FOLDERS", true));
         navigationView.getMenu().getItem(4).setVisible(preferences.getBoolean("PLAYLISTS", true));
+
     }
 
 
@@ -532,13 +531,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if (!getForegroundFragment().getClass().getSimpleName().equals(AlbumSongsFragment.class.getSimpleName()) && !getForegroundFragment().getClass().getSimpleName().equals(ArtistAlbumsFragment.class.getSimpleName())
-            && !getForegroundFragment().getClass().getSimpleName().equals(PlaylistSongsFragment.class.getSimpleName())) {
-
-            index = 0;
-        }
-
-        secondary_index = 0;
+        index = 0;
 
         if (drawer.isDrawerOpen(GravityCompat.START)) drawer.closeDrawer(GravityCompat.START);
 
@@ -578,8 +571,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         index = 0;
-        secondary_index = 0;
-
     }
 
     public void onAlbumClicked(MenuItem item) {
@@ -594,7 +585,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         index = 0;
-        secondary_index = 0;
     }
 
     public void onArtistClicked(MenuItem item) {
@@ -609,8 +599,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         index = 0;
-        secondary_index = 0;
-
     }
 
     public void onSongClicked(MenuItem item) {
@@ -625,7 +613,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         index = 0;
-        secondary_index = 0;
     }
 
     public void onPlaylistClicked(MenuItem item) {
@@ -640,7 +627,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         index = 0;
-        secondary_index = 0;
     }
 
     private void playAudioFromFile(Uri fileUri){
@@ -848,4 +834,12 @@ public class MainActivity extends AppCompatActivity {
 
         super.onDestroy();
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBundle("BUNDLE_NAVSTATE", navController.saveState());
+        super.onSaveInstanceState(outState);
+    }
+
+
 }

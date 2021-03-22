@@ -23,7 +23,6 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,6 +77,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
     private String totalSongNo;
     private int resumePosition;
     private boolean wasMoved = false;
+    public static boolean shuffle = false;
 
     private RecyclerView recyclerView;
     private QueueAdapter queueAdapter;
@@ -212,8 +212,6 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
     };
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -266,7 +264,6 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
 
-                Log.d("TAGSTATE", String.valueOf(newState));
                 if (newState == SlidingUpPanelLayout.PanelState.COLLAPSED && wasMoved) {
                     album_art_view_pager.setCurrentItem(MediaPlayerService.audioIndex);
                     wasMoved = false;
@@ -299,7 +296,6 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                     @Override
                     public void run() {
 
-                        Log.d("TAG", " " + fromMainActivity + " Button: " + button);
                         if (fromMainActivity == 2) {
                             if (!button) playAudio(position, 0);
                             button = false;
@@ -364,7 +360,9 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
                             case "Add to playlist":
                                 if (MediaPlayerService.activeAudio.getId() != -100) {
-                                    queueAdapter.addToPlaylist(MediaPlayerService.audioIndex);
+                                    ArrayList<Songs> addSong = new ArrayList<>();
+                                    addSong.add(MediaPlayerService.audioList.get(MediaPlayerService.audioIndex));
+                                    DataLoader.addToPlaylist(addSong, NowPlaying.this, null);
                                 }
                                 else {
                                     Toast.makeText(NowPlaying.this, "Unable to perform task", Toast.LENGTH_SHORT).show();
@@ -501,10 +499,10 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
         }
 
 
-
         contentValues.put("play_order", playOrder);
-
         contentResolver.insert(uri,contentValues);
+
+        Toast.makeText(NowPlaying.this, "Song has been added to the playlist!", Toast.LENGTH_SHORT).show();
 
         dialog.dismiss();
     }
@@ -542,12 +540,15 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
                 for (int i =0; i<mySongs.size(); i++) {
 
+                    contentValues.clear();
                     contentValues.put("audio_id", mySongs.get(i).getId());
-
                     contentValues.put("play_order", playOrder);
-
                     contentResolver.insert(uri, contentValues);
+                    playOrder++;
                 }
+
+                if (mySongs.size()>1) Toast.makeText(NowPlaying.this, mySongs.size() + " songs have been added to the playlist!", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(NowPlaying.this, "1 song has been added to the playlist!", Toast.LENGTH_SHORT).show();
 
             }
         }.run();
@@ -557,10 +558,15 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
     private void buttonControls() {
 
-        if (MediaControllerCompat.getMediaController(NowPlaying.this).getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_ALL)
-            now_playing_shuffle.setImageResource(R.drawable.shuffle_green);
 
+        if (MediaControllerCompat.getMediaController(NowPlaying.this).getShuffleMode() == PlaybackStateCompat.SHUFFLE_MODE_ALL || shuffle)
+            now_playing_shuffle.setImageResource(R.drawable.shuffle_green);
         else now_playing_shuffle.setImageResource(R.drawable.shuffle_white);
+
+        if (shuffle)  {
+            MediaControllerCompat.getMediaController(NowPlaying.this).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+            shuffle = false;
+        }
 
         if (MediaControllerCompat.getMediaController(NowPlaying.this).getRepeatMode() == PlaybackStateCompat.REPEAT_MODE_ALL)
             now_playing_repeat.setImageResource(R.drawable.repeat_green);
@@ -775,21 +781,21 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                     float x = speed.getFloat("SPEED", 1.0f);
 
                     if (x == 0.25) {
-                        speed_0_25x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_0_25x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 0.50) {
-                        speed_0_50x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_0_50x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 0.75) {
-                        speed_0_75x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_0_75x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 1.0) {
-                        speed_1.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_1.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 1.25) {
-                        speed_1_25x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_1_25x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 1.50) {
-                        speed_1_50x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_1_50x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 1.75) {
-                        speed_1_75x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_1_75x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 2.0) {
-                        speed_2.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_2.setTextColor(getColor(R.color.programmer_green));
                     }
 
 
@@ -902,37 +908,38 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                 }
             }
 
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                 double x = state.getPlaybackSpeed();
 
                 if (x != 0) {
 
-                    speed_0_25x.setTextColor(getResources().getColor(R.color.notification_artist));
-                    speed_0_50x.setTextColor(getResources().getColor(R.color.notification_artist));
-                    speed_0_75x.setTextColor(getResources().getColor(R.color.notification_artist));
-                    speed_1.setTextColor(getResources().getColor(R.color.notification_artist));
-                    speed_1_25x.setTextColor(getResources().getColor(R.color.notification_artist));
-                    speed_1_50x.setTextColor(getResources().getColor(R.color.notification_artist));
-                    speed_1_75x.setTextColor(getResources().getColor(R.color.notification_artist));
-                    speed_2.setTextColor(getResources().getColor(R.color.notification_artist));
+                    speed_0_25x.setTextColor(getColor(R.color.notification_artist));
+                    speed_0_50x.setTextColor(getColor(R.color.notification_artist));
+                    speed_0_75x.setTextColor(getColor(R.color.notification_artist));
+                    speed_1.setTextColor(getColor(R.color.notification_artist));
+                    speed_1_25x.setTextColor(getColor(R.color.notification_artist));
+                    speed_1_50x.setTextColor(getColor(R.color.notification_artist));
+                    speed_1_75x.setTextColor(getColor(R.color.notification_artist));
+                    speed_2.setTextColor(getColor(R.color.notification_artist));
 
                     if (x == 0.25) {
-                        speed_0_25x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_0_25x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 0.50) {
-                        speed_0_50x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_0_50x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 0.75) {
-                        speed_0_75x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_0_75x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 1.0) {
-                        speed_1.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_1.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 1.25) {
-                        speed_1_25x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_1_25x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 1.50) {
-                        speed_1_50x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_1_50x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 1.75) {
-                        speed_1_75x.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_1_75x.setTextColor(getColor(R.color.programmer_green));
                     } else if (x == 2.0) {
-                        speed_2.setTextColor(getResources().getColor(R.color.programmer_green));
+                        speed_2.setTextColor(getColor(R.color.programmer_green));
                     }
                 }
             }
@@ -1103,15 +1110,15 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                 songs.add(MediaPlayerService.audioList.get(indices.get(i)));
             }
 
-            switch (item.getItemId()) {
+            switch (item.getTitle().toString()) {
 
-                case R.id.selected_play:
+                case "Play":
                     DataLoader.playAudio(0, songs, storage, NowPlaying.this);
                     button = true;
                     mode.finish();
                     return true;
 
-                case R.id.selected_enqueue:
+                case "Enqueue":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
@@ -1119,7 +1126,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                     mode.finish();
                     return true;
 
-                case R.id.selected_play_next:
+                case "Play next":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(MediaPlayerService.audioIndex+1, songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
@@ -1127,19 +1134,19 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
                     mode.finish();
                     return true;
 
-                case R.id.selected_shuffle:
+                case "Shuffle":
                     DataLoader.playAudio(0, songs, storage, NowPlaying.this);
                     button = true;
                     MediaControllerCompat.getMediaController(NowPlaying.this).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
                     mode.finish();
                     return true;
 
-                case R.id.selected_add_to_playlist:
+                case "Add to playlist":
                     DataLoader.addToPlaylist(songs, NowPlaying.this, null);
                     mode.finish();
                     return true;
 
-                case R.id.selected_delete:
+                case "Delete":
                     SongsFragment.deleteSongs(songs, NowPlaying.this);
                     queueAdapter.notifyDataSetChanged();
                     mode.finish();
@@ -1317,12 +1324,12 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
     @Override
     public boolean onSupportNavigateUp() {
-//        if(getSupportFragmentManager().getBackStackEntryCount() == 0)
         if(isTaskRoot()){
             startActivity(new Intent(this, MainActivity.class));
         }
         return super.onSupportNavigateUp();
     }
+
 
     @Override
     protected void onDestroy() {

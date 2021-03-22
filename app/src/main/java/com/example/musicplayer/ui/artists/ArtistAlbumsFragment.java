@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +43,7 @@ import com.example.musicplayer.adapters.SongChanged;
 import com.example.musicplayer.database.Albums;
 import com.example.musicplayer.database.DataLoader;
 import com.example.musicplayer.database.Songs;
+import com.example.musicplayer.nowplaying.NowPlaying;
 import com.example.musicplayer.ui.SettingsActivity;
 import com.example.musicplayer.ui.albums.AlbumsFragment;
 import com.example.musicplayer.ui.equalizer.EqualizerActivity;
@@ -53,6 +56,8 @@ import java.util.Random;
 
 
 public class ArtistAlbumsFragment extends Fragment implements ItemClicked, PlaylistItemClicked, SongChanged {
+
+    private Parcelable recyclerviewParcelable;
 
     private RecyclerView recyclerView;
     private View root;
@@ -78,6 +83,11 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
         setHasOptionsMenu(true);
 
         root = inflater.inflate(R.layout.fragment_artist_albums, container, false);
+
+        recyclerView = root.findViewById(R.id.artist_albums_recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
+
         return root;
     }
 
@@ -92,11 +102,7 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
         toolbar.setHomeAsUpIndicator(R.drawable.back_green);
         toolbar.setTitle(ArtistsFragment.artist.getArtist());
 
-        recyclerView = root.findViewById(R.id.artist_albums_recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(context, 2));
         artistAlbumsAdapterRunnable.run();
-
     }
 
     private ArrayList<Albums> loadArtistAlbums() {
@@ -147,7 +153,6 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
     public void onItemClicked(int index) {
 
         if (actionMode == null) {
-            MainActivity.secondary_index = index;
             AlbumsFragment.album = artistAlbums.get(index);
             NavHostFragment.findNavController(this).navigate(R.id.action_artist_albums_frag_to_albumSongsFragment2);
         }
@@ -169,8 +174,9 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
             artistAlbums = loadArtistAlbums();
             myAdapter = new AlbumsAdapter(artistAlbums, FragmentManager.findFragment(root), context);
             recyclerView.setAdapter(myAdapter);
-            recyclerView.scrollToPosition(MainActivity.secondary_index);
-
+            if (recyclerviewParcelable != null){
+                recyclerView.getLayoutManager().onRestoreInstanceState(recyclerviewParcelable);
+            }
         }
     };
 
@@ -213,12 +219,14 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
 
                 for (int i =0; i<mySongs.size(); i++) {
 
+                    contentValues.clear();
                     contentValues.put("audio_id", mySongs.get(i).getId());
-
                     contentValues.put("play_order", playOrder);
-
                     contentResolver.insert(uri, contentValues);
+                    playOrder++;
                 }
+                if (mySongs.size()>1) Toast.makeText(context, mySongs.size() + " songs have been added to the playlist!", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(context, "1 song has been added to the playlist!", Toast.LENGTH_SHORT).show();
 
             }
         }.run();
@@ -255,7 +263,7 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
                         shuffleSongs.addAll(DataLoader.loadAudio(artistAlbums.get(i).getId(), 1, context, sort));
                     }
                     DataLoader.playAudio(new Random().nextInt(shuffleSongs.size()), shuffleSongs, storage, context);
-                    MediaControllerCompat.getMediaController((Activity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    NowPlaying.shuffle = true;
                     break;
 
                 case "Save Now Playing":
@@ -299,13 +307,12 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
                     if (!item.isChecked()) {
                         item.setChecked(true);
                         sort.edit().putBoolean("ArtistAlbumReverse", true).apply();
-                        artistAlbumsAdapterRunnable.run();
                     }
                     else {
                         item.setChecked(false);
                         sort.edit().putBoolean("ArtistAlbumReverse", false).apply();
-                        artistAlbumsAdapterRunnable.run();
                     }
+                    artistAlbumsAdapterRunnable.run();
                     break;
 
                 default:
@@ -362,39 +369,43 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
                 songs.addAll(DataLoader.loadAudio(artistAlbums.get(indices.get(i)).getId(), 1, context, sort));
             }
 
-            switch (item.getItemId()) {
+            switch (item.getTitle().toString()) {
 
-                case R.id.selected_play:
+                case "Play":
                     DataLoader.playAudio(0, songs, storage, context);
                     mode.finish();
                     return true;
 
-                case R.id.selected_enqueue:
+                case "Enqueue":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_play_next:
+                case "Play next":
                     if (MediaPlayerService.audioList != null) MediaPlayerService.audioList.addAll(MediaPlayerService.audioIndex+1, songs);
                     else MediaPlayerService.audioList = songs;
                     storage.storeAudio(MediaPlayerService.audioList);
+                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                     mode.finish();
                     return true;
 
-                case R.id.selected_shuffle:
+                case "Shuffle":
                     DataLoader.playAudio(0, songs, storage, context);
-                    MediaControllerCompat.getMediaController(getActivity()).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                    NowPlaying.shuffle = true;
                     mode.finish();
                     return true;
 
-                case R.id.selected_add_to_playlist:
+                case "Add to playlist":
                     DataLoader.addToPlaylist(songs, context, ArtistAlbumsFragment.this);
                     mode.finish();
                     return true;
 
-                case R.id.selected_delete:
+                case "Delete":
                     SongsFragment.deleteSongs(songs, context);
                     myAdapter.notifyDataSetChanged();
                     mode.finish();
@@ -424,6 +435,13 @@ public class ArtistAlbumsFragment extends Fragment implements ItemClicked, Playl
             actionMode.setTitle(String.valueOf(count));
             actionMode.invalidate();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        recyclerviewParcelable = recyclerView.getLayoutManager().onSaveInstanceState();
     }
 
     @Override

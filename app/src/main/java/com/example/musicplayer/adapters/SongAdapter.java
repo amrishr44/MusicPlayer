@@ -10,8 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,13 +70,13 @@ public class SongAdapter extends SelectableAdapter<SongAdapter.ViewHolder> imple
 
         if (sort.getString("sortOrder", MediaStore.Audio.Media.DEFAULT_SORT_ORDER).equals(MediaStore.Audio.Media.DEFAULT_SORT_ORDER)) {
             String s;
-            int x = (int) songs.get(i).getTitle().toUpperCase().charAt(0);
+            int x = songs.get(i).getTitle().toUpperCase().charAt(0);
 
             if (songs.get(i).getTitle().toUpperCase().indexOf("THE ") == 0) {
                 s = songs.get(i).getTitle().substring(4, 5).toUpperCase();
             } else if (songs.get(i).getTitle().toUpperCase().indexOf("A ") == 0) {
                 s = songs.get(i).getTitle().substring(2, 3).toUpperCase();
-            }else if (songs.get(i).getTitle().toUpperCase().indexOf("\'") == 0 || songs.get(i).getTitle().toUpperCase().indexOf("\"") == 0) {
+            }else if (songs.get(i).getTitle().toUpperCase().indexOf("'") == 0 || songs.get(i).getTitle().toUpperCase().indexOf("\"") == 0) {
                 s = songs.get(i).getTitle().substring(1, 2).toUpperCase();
             } else if (!(x >= 65 && x <= 90)) s = "#";
             else {
@@ -193,8 +191,7 @@ public class SongAdapter extends SelectableAdapter<SongAdapter.ViewHolder> imple
                             switch (item.getTitle().toString()) {
 
                                 case "Play":
-                                    if(fragment.getClass().getSimpleName().equals(AlbumSongsFragment.class.getSimpleName())) MainActivity.secondary_index = position;
-                                    else MainActivity.index = position;
+                                    MainActivity.index = position;
                                     ArrayList<Songs> playSong = new ArrayList<>();
                                     playSong.add(songs.get(position));
                                     DataLoader.playAudio(0, playSong, storage, context);
@@ -203,18 +200,18 @@ public class SongAdapter extends SelectableAdapter<SongAdapter.ViewHolder> imple
                                 case "Enqueue":
                                     MediaPlayerService.audioList.add(songs.get(position));
                                     storage.storeAudio(MediaPlayerService.audioList);
+                                    Toast.makeText(context, "Song has been added to the queue!", Toast.LENGTH_SHORT).show();
                                     break;
 
                                 case "Play next":
                                     MediaPlayerService.audioList.add(MediaPlayerService.audioIndex + 1, songs.get(position));
                                     storage.storeAudio(MediaPlayerService.audioList);
+                                    Toast.makeText(context, "Song has been added to the queue!", Toast.LENGTH_SHORT).show();
                                     break;
 
                                 case "Shuffle":
-                                    if(fragment.getClass().getSimpleName().equals(AlbumSongsFragment.class.getSimpleName())) MainActivity.secondary_index = position;
-                                    else MainActivity.index = position;
                                     DataLoader.playAudio(position, songs, storage, context);
-                                    MediaControllerCompat.getMediaController((AppCompatActivity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                                    NowPlaying.shuffle = true;
                                     break;
 
                                 case "Add to playlist":
@@ -224,16 +221,14 @@ public class SongAdapter extends SelectableAdapter<SongAdapter.ViewHolder> imple
                                     break;
 
                                 case "Lyrics":
-                                    if(fragment.getClass().getSimpleName().equals(AlbumSongsFragment.class.getSimpleName())) MainActivity.secondary_index = position;
-                                    else MainActivity.index = position;
+                                    MainActivity.index = position;
                                     Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
                                     intent.putExtra("query", songs.get(position).getTitle() + " " + songs.get(position).getArtist() + " lyrics");
                                     context.startActivity(intent);
                                     break;
 
                                 case "Edit tags":
-                                    if(fragment.getClass().getSimpleName().equals(AlbumSongsFragment.class.getSimpleName())) MainActivity.secondary_index = position;
-                                    else MainActivity.index = position;
+                                    MainActivity.index = position;
                                     EditTags.song = songs.get(position);
                                     fragment.startActivityForResult(new Intent(context, EditTags.class), 421);
                                     break;
@@ -243,8 +238,7 @@ public class SongAdapter extends SelectableAdapter<SongAdapter.ViewHolder> imple
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                         if (!Settings.System.canWrite(context)) {
 
-                                            if(fragment.getClass().getSimpleName().equals(AlbumSongsFragment.class.getSimpleName())) MainActivity.secondary_index = position;
-                                            else MainActivity.index = position;
+                                            MainActivity.index = position;
                                             Intent ringtoneIntent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                                             ((AppCompatActivity)context).startActivityForResult(ringtoneIntent, 69);
 

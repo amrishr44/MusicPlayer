@@ -7,8 +7,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,10 +14,10 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +30,7 @@ import com.example.musicplayer.StorageUtil;
 import com.example.musicplayer.database.DataLoader;
 import com.example.musicplayer.database.Playlists;
 import com.example.musicplayer.database.Songs;
+import com.example.musicplayer.nowplaying.NowPlaying;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +76,6 @@ public class PlaylistsAdapter extends SelectableAdapter<PlaylistsAdapter.ViewHol
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-
         }
 
 
@@ -143,24 +141,26 @@ public class PlaylistsAdapter extends SelectableAdapter<PlaylistsAdapter.ViewHol
                             switch (item.getTitle().toString()) {
 
                                 case "Play":
-                                    MainActivity.index = position;
                                     DataLoader.playAudio(0, songs, storage, context);
                                     break;
 
                                 case "Enqueue":
                                     MediaPlayerService.audioList.addAll(songs);
                                     storage.storeAudio(MediaPlayerService.audioList);
+                                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                                     break;
 
                                 case "Play next":
                                     MediaPlayerService.audioList.addAll(MediaPlayerService.audioIndex + 1, songs);
                                     storage.storeAudio(MediaPlayerService.audioList);
+                                    if (songs.size()>1) Toast.makeText(context, songs.size() + " songs have been added to the queue!", Toast.LENGTH_SHORT).show();
+                                    else Toast.makeText(context, "1 song has been added to the queue!", Toast.LENGTH_SHORT).show();
                                     break;
 
                                 case "Shuffle":
-                                    MainActivity.index = position;
-                                    DataLoader.playAudio(position, songs,storage,context);
-                                    MediaControllerCompat.getMediaController((AppCompatActivity) context).getTransportControls().setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL);
+                                    DataLoader.playAudio(position, songs, storage, context);
+                                    NowPlaying.shuffle = true;
                                     break;
 
                                 case "Add to playlist":

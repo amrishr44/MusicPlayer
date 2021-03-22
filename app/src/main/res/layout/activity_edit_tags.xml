@@ -8,191 +8,198 @@
     android:orientation="vertical"
     tools:context=".ui.EditTags">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/et_toolbar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/toolbar_bg"
-        android:fitsSystemWindows="true"
-        android:gravity="center_vertical"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:contentInsetStartWithNavigation="0dp"
-        app:navigationIcon="@drawable/back_green"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:title="Edit Tags"
-        app:titleMargin="0dp"
-        app:titleTextColor="@color/programmer_green" />
+        android:layout_marginBottom="60dp"
+        android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/et_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:background="@color/programmer_green"
-            android:orientation="vertical">
+            android:background="@drawable/toolbar_bg"
+            android:fitsSystemWindows="true"
+            android:gravity="center_vertical"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationIcon="@drawable/back_green"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="Edit Tags"
+            app:titleMargin="0dp"
+            app:titleTextColor="@color/programmer_green" />
 
-            <TextView
-                android:id="@+id/edit_song_data"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:background="#000"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="10dp"
-                android:text="TextView"
-                android:textColor="@color/notification_artist"
-                android:textSize="16sp" />
+                android:background="@color/programmer_green"
+                android:orientation="vertical">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#000"
-                android:paddingStart="5dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="5dp"
-                android:text="Title:"
-                android:textAppearance="@style/Custom_text_Appearance" />
+                <TextView
+                    android:id="@+id/edit_song_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="#000"
+                    android:paddingStart="20dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="10dp"
+                    android:text="TextView"
+                    android:textColor="@color/notification_artist"
+                    android:textSize="16sp" />
 
-            <EditText
-                android:id="@+id/edit_tags_title"
-                style="@style/Edit_Text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:background="#000"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="20dp"
-                android:textAppearance="@style/Custom_text_Appearance"
-                android:textColor="@color/programmer_green" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#000"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="5dp"
+                    android:text="Title:"
+                    android:textAppearance="@style/Custom_text_Appearance" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#000"
-                android:paddingStart="5dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="5dp"
-                android:text="Album:"
-                android:textAppearance="@style/Custom_text_Appearance" />
+                <EditText
+                    android:id="@+id/edit_tags_title"
+                    style="@style/Edit_Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="#000"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:maxLines="2"
+                    android:paddingStart="20dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="20dp"
+                    android:textAppearance="@style/Custom_text_Appearance"
+                    android:textColor="@color/programmer_green" />
 
-            <EditText
-                android:id="@+id/edit_tags_album"
-                style="@style/Edit_Text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:background="#000"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="20dp"
-                android:textAppearance="@style/Custom_text_Appearance"
-                android:textColor="@color/programmer_green" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#000"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="5dp"
+                    android:text="Album:"
+                    android:textAppearance="@style/Custom_text_Appearance" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#000"
-                android:paddingStart="5dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="5dp"
-                android:text="Artist:"
-                android:textAppearance="@style/Custom_text_Appearance" />
+                <EditText
+                    android:id="@+id/edit_tags_album"
+                    style="@style/Edit_Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="#000"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:maxLines="2"
+                    android:paddingStart="20dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="20dp"
+                    android:textAppearance="@style/Custom_text_Appearance"
+                    android:textColor="@color/programmer_green" />
 
-            <EditText
-                android:id="@+id/edit_tags_artist"
-                style="@style/Edit_Text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:background="#000"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:maxLines="2"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="20dp"
-                android:textAppearance="@style/Custom_text_Appearance"
-                android:textColor="@color/programmer_green" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#000"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="5dp"
+                    android:text="Artist:"
+                    android:textAppearance="@style/Custom_text_Appearance" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#000"
-                android:paddingStart="5dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="5dp"
-                android:text="Track:"
-                android:textAppearance="@style/Custom_text_Appearance" />
+                <EditText
+                    android:id="@+id/edit_tags_artist"
+                    style="@style/Edit_Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="#000"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:maxLines="2"
+                    android:paddingStart="20dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="20dp"
+                    android:textAppearance="@style/Custom_text_Appearance"
+                    android:textColor="@color/programmer_green" />
 
-            <EditText
-                android:id="@+id/edit_tags_track"
-                style="@style/Edit_Text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:background="#000"
-                android:ems="10"
-                android:inputType="number"
-                android:maxLines="2"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="20dp"
-                android:textAppearance="@style/Custom_text_Appearance"
-                android:textColor="@color/programmer_green" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#000"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="5dp"
+                    android:text="Track:"
+                    android:textAppearance="@style/Custom_text_Appearance" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#000"
-                android:paddingStart="5dp"
-                android:paddingTop="10dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="5dp"
-                android:text="Year:"
-                android:textAppearance="@style/Custom_text_Appearance" />
+                <EditText
+                    android:id="@+id/edit_tags_track"
+                    style="@style/Edit_Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="#000"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:maxLines="2"
+                    android:paddingStart="20dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="20dp"
+                    android:textAppearance="@style/Custom_text_Appearance"
+                    android:textColor="@color/programmer_green" />
 
-            <EditText
-                android:id="@+id/edit_tags_year"
-                style="@style/Edit_Text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:background="#000"
-                android:ems="10"
-                android:inputType="number"
-                android:maxLines="2"
-                android:paddingStart="5dp"
-                android:paddingTop="5dp"
-                android:paddingEnd="5dp"
-                android:paddingBottom="20dp"
-                android:textAppearance="@style/Custom_text_Appearance"
-                android:textColor="@color/programmer_green" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#000"
+                    android:paddingStart="20dp"
+                    android:paddingTop="10dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="5dp"
+                    android:text="Year:"
+                    android:textAppearance="@style/Custom_text_Appearance" />
+
+                <EditText
+                    android:id="@+id/edit_tags_year"
+                    style="@style/Edit_Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="#000"
+                    android:ems="10"
+                    android:inputType="number"
+                    android:maxLines="2"
+                    android:paddingStart="20dp"
+                    android:paddingTop="5dp"
+                    android:paddingEnd="20dp"
+                    android:paddingBottom="20dp"
+                    android:textAppearance="@style/Custom_text_Appearance"
+                    android:textColor="@color/programmer_green" />
 
 
-        </LinearLayout>
+            </LinearLayout>
 
-    </ScrollView>
+        </ScrollView>
+
+    </LinearLayout>
 
 
     <LinearLayout

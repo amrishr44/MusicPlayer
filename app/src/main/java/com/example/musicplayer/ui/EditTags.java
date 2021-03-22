@@ -36,8 +36,8 @@ public class EditTags extends AppCompatActivity {
         setContentView(R.layout.activity_edit_tags);
 
         Toolbar toolbar = findViewById(R.id.et_toolbar);
-
         setSupportActionBar(toolbar);
+
 
         final ContentResolver contentResolver = getContentResolver();
 
@@ -206,14 +206,9 @@ public class EditTags extends AppCompatActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        if (wasChanged){
-            Intent intent = new Intent();
-            intent.putStringArrayListExtra("data", newData);
-            setResult(RESULT_OK, intent);
-        }
-        else setResult(RESULT_CANCELED);
-        this.finish();
-        return true;
+
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 
     @Override

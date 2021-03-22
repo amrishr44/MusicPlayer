@@ -148,7 +148,11 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
             if (!isShuffleOn) {
                 audioIndex = audioList.indexOf(activeAudio) + 1;  //Shuffle off, selects next song
             } else {
-                audioIndex = new Random().nextInt(audioList.size()); //Shuffle on, selects random song from playlist
+                int x = new Random().nextInt(audioList.size());
+                while (audioIndex == x && audioList.size() > 1){
+                    x = new Random().nextInt(audioList.size());
+                }
+                audioIndex = x; //Shuffle on, selects random song from playlist
             }
         }
 
@@ -746,7 +750,13 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
 
             if (repeatModeValue != 1) {
                 if (!isShuffleOn) audioIndex = audioList.indexOf(activeAudio) + 1;
-                else audioIndex = new Random().nextInt(audioList.size());
+                else {
+                    int x = new Random().nextInt(audioList.size());
+                    while (audioIndex == x && audioList.size() > 1){
+                        x = new Random().nextInt(audioList.size());
+                    }
+                    audioIndex = x; //Shuffle on, selects random song from playlist
+                }
             }
 
             resumePosition =0;
@@ -787,7 +797,13 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
 
                 if (repeatModeValue != 1) {
                     if (!isShuffleOn) audioIndex = audioList.indexOf(activeAudio) - 1;
-                    else audioIndex = new Random().nextInt(audioList.size());
+                    else {
+                        int x = new Random().nextInt(audioList.size());
+                        while (audioIndex == x && audioList.size() > 1){
+                            x = new Random().nextInt(audioList.size());
+                        }
+                        audioIndex = x; //Shuffle on, selects random song from playlist
+                    }
                 }
 
 

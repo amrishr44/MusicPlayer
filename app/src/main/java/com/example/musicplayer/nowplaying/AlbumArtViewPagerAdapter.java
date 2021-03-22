@@ -1,6 +1,7 @@
 package com.example.musicplayer.nowplaying;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -25,9 +26,11 @@ public class AlbumArtViewPagerAdapter extends RecyclerView.Adapter<AlbumArtViewP
 
 
     private final Context context;
+    private final SharedPreferences sharedPreferences;
 
     public AlbumArtViewPagerAdapter(Context context) {
         this.context = context;
+        sharedPreferences = context.getSharedPreferences("VOLUME_BAR", Context.MODE_PRIVATE);
     }
 
     public  class AlbumArtViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -41,26 +44,43 @@ public class AlbumArtViewPagerAdapter extends RecyclerView.Adapter<AlbumArtViewP
 
             now_playing_album_art = itemView.findViewById(R.id.now_playing_album_art);
             volume_bar = ((AppCompatActivity)context).findViewById(R.id.volume_bar);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 speed_bar = ((AppCompatActivity) context).findViewById(R.id.speed_bar);
             }
+
+            if (sharedPreferences.getBoolean("VISIBLE", true)){
+                volume_bar.setVisibility(View.VISIBLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    speed_bar.setVisibility(View.VISIBLE);
+                }
+            }
+            else{
+                volume_bar.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    speed_bar.setVisibility(View.GONE);
+                }
+            }
+
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
 
-            if (volume_bar.getVisibility() == View.VISIBLE){
+            if (sharedPreferences.getBoolean("VISIBLE", true)){
                 volume_bar.setVisibility(View.GONE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     speed_bar.setVisibility(View.GONE);
                 }
+                sharedPreferences.edit().putBoolean("VISIBLE", false).apply();
             }
             else{
                 volume_bar.setVisibility(View.VISIBLE);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     speed_bar.setVisibility(View.VISIBLE);
                 }
+                sharedPreferences.edit().putBoolean("VISIBLE", true).apply();
             }
         }
 
