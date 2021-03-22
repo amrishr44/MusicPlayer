@@ -487,11 +487,10 @@ public class MediaPlayerService extends MediaBrowserServiceCompat implements Med
                 // Lockscreen wallpaper is changed to the song album art while playing
                 try {
                     metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, MediaStore.Images.Media.getBitmap(getContentResolver(), myuri));
-                } catch (Exception e) {
-                    metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, BitmapFactory.decodeResource(getResources(), R.mipmap.cassette_green_foreground));
+                } catch (Exception ignored) {
+
                 }
             }
-            else metadataBuilder.putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, null);
 
 
             mediaSession.setActive(true);
