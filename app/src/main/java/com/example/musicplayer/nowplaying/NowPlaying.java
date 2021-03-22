@@ -582,7 +582,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
         song_title.setText(MediaPlayerService.audioList.get(storage.loadAudioIndexAndPosition()[0]).getTitle());
         song_artist_album.setText(MediaPlayerService.audioList.get(storage.loadAudioIndexAndPosition()[0]).getArtist() + " - " + MediaPlayerService.audioList.get(storage.loadAudioIndexAndPosition()[0]).getAlbum());
         song_number.setText((storage.loadAudioIndexAndPosition()[0]+1) + totalSongNo);
-
+        album_art_view_pager.setCurrentItem(storage.loadAudioIndexAndPosition()[0]);
 
         new Runnable() {
             @Override
@@ -952,7 +952,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
             song_title.setText(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getTitle());
             song_artist_album.setText(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getArtist() + " - " + storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getAlbum());
-            song_number.setText((storage.loadAudioIndexAndPosition()[0]+1) + totalSongNo);
+            song_number.setText((storage.loadAudioIndexAndPosition()[0]+1) + "/" + MediaPlayerService.audioList.size());
 
             queueAdapter.notifyDataSetChanged();
 
@@ -1036,6 +1036,7 @@ public class NowPlaying extends AppCompatActivity implements ItemClicked, Playli
 
         mediaController.unregisterCallback(controllerCallback);
         mediaBrowser.disconnect();
+        button = true;
     }
 
 

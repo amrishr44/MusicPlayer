@@ -368,7 +368,6 @@ public class MainActivity extends AppCompatActivity {
                     if (storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getAlbumid() != -100) {
                         Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getAlbumid()))
                                 .error(R.mipmap.cassette_image_foreground)
-                                .placeholder(R.mipmap.cassette_image_foreground)
                                 .centerCrop()
                                 .fallback(R.mipmap.cassette_image_foreground)
                                 .into(control_album_art);
@@ -378,7 +377,6 @@ public class MainActivity extends AppCompatActivity {
                         m.setDataSource(storage.loadAudio().get(storage.loadAudioIndexAndPosition()[0]).getData());
                         Glide.with(MainActivity.this).load(m.getEmbeddedPicture())
                                 .error(R.mipmap.cassette_image_foreground)
-                                .placeholder(R.mipmap.cassette_image_foreground)
                                 .centerCrop()
                                 .fallback(R.mipmap.cassette_image_foreground)
                                 .into(control_album_art);
@@ -392,7 +390,6 @@ public class MainActivity extends AppCompatActivity {
                     if (MediaPlayerService.activeAudio.getAlbumid() != -100) {
                         Glide.with(MainActivity.this).load(ContentUris.withAppendedId(Uri.parse("content://media/external/audio/albumart"), MediaPlayerService.activeAudio.getAlbumid()))
                                 .error(R.mipmap.cassette_image_foreground)
-                                .placeholder(R.mipmap.cassette_image_foreground)
                                 .centerCrop()
                                 .fallback(R.mipmap.cassette_image_foreground)
                                 .into(control_album_art);
@@ -402,7 +399,6 @@ public class MainActivity extends AppCompatActivity {
                         m.setDataSource(MediaPlayerService.activeAudio.getData());
                         Glide.with(MainActivity.this).load(m.getEmbeddedPicture())
                                 .error(R.mipmap.cassette_image_foreground)
-                                .placeholder(R.mipmap.cassette_image_foreground)
                                 .centerCrop()
                                 .fallback(R.mipmap.cassette_image_foreground)
                                 .into(control_album_art);

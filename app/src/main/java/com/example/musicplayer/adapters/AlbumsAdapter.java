@@ -251,7 +251,6 @@ public class AlbumsAdapter extends SelectableAdapter<AlbumsAdapter.ViewHolder> i
                             new File(songs.get(i).getData()).delete();
                             songs.remove(i);
                         }
-                        context.getContentResolver().delete(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, "_id =? ", new String[]{String.valueOf(albums.get(position).getId())});
                         albums.remove(position);
                         notifyDataSetChanged();
                     }
